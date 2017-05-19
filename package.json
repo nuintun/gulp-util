@@ -1,0 +1,20 @@
+{
+  "name": "@nuintun/gulp-util",
+  "version": "0.0.1",
+  "description": "Utilities for gulp-cmd and gulp-css.",
+  "main": "util.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nuintun/gulp-util.git"
+  },
+  "keywords": [
+    "gulp",
+    "util"
+  ],
+  "author": "nuintun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nuintun/gulp-util/issues"
+  },
+  "homepage": "https://github.com/nuintun/gulp-util#readme"
+}
