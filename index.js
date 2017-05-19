@@ -44,4 +44,4 @@ module.exports = {
   isOutBound: util.isOutBound,
   pathFromCwd: util.pathFromCwd,
   readonlyProperty: util.readonlyProperty
-}
+};
