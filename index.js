@@ -11,6 +11,7 @@
 'use strict';
 
 var async = require('./lib/async');
+var cache = require('./lib/cache');
 var extend = require('./lib/extend');
 var hash = require('./lib/hash');
 var is = require('./lib/is');
@@ -21,6 +22,7 @@ var util = require('./lib/util');
 
 module.exports = {
   async: async,
+  cache: cache,
   extend: extend,
   hash: hash,
   type: is.type,
