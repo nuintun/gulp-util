@@ -32,6 +32,7 @@ module.exports = {
   rename: rename,
   transport: transport,
   cwd: util.cwd,
+  slice: util.slice,
   apply: util.apply,
   undef: util.undef,
   colors: util.colors,
