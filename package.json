@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/nuintun/gulp-util/issues"
   },
-  "homepage": "https://github.com/nuintun/gulp-util#readme"
+  "homepage": "https://github.com/nuintun/gulp-util",
+  "dependencies": {
+    "vinyl": "^2.0.2",
+    "colors": "^1.1.2"
+  }
 }
