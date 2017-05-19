@@ -17,6 +17,7 @@ var hasOwnProperty = Object.prototype.hasOwnProperty;
 var fnToString = hasOwnProperty.toString;
 var objectFunctionString = fnToString.call(Object);
 var EXTRACTTYPE_RE = /\[object (.+)\]/i;
+var undef = void(0);
 
 /**
  * type
@@ -138,7 +139,7 @@ function extend() {
 
           // Never move original objects, clone them
           target[name] = extend(deep, clone, copy);
-        } else if (copy !== undefined) {
+        } else if (copy !== undef) {
           // Don't bring in undefined values
           target[name] = copy;
         }
