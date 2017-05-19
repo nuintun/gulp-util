@@ -14,7 +14,7 @@ var async = require('./lib/async');
 var extend = require('./lib/extend');
 var hash = require('./lib/hash');
 var is = require('./lib/is');
-var Plugin = require('./lib/plugin');
+var plugins = require('./lib/plugins');
 var rename = require('./lib/rename');
 var transport = require('./lib/transport');
 var util = require('./lib/util');
@@ -28,7 +28,7 @@ module.exports = {
   isString: is.isString,
   isFunction: is.isFunction,
   isPlainObject: is.isPlainObject,
-  Plugin: Plugin,
+  plugins: plugins,
   rename: rename,
   transport: transport,
   cwd: util.cwd,
