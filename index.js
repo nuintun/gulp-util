@@ -14,6 +14,7 @@ var Vinyl = require('vinyl');
 var colors = require('colors/safe');
 var async = require('./lib/async');
 var Cache = require('./lib/cache');
+var enmu = require('./lib/enmu');
 var extend = require('./lib/extend');
 var hash = require('./lib/hash');
 var is = require('./lib/is');
@@ -27,6 +28,8 @@ module.exports = {
   colors: colors,
   async: async,
   Cache: Cache,
+  BLANK_BUFFER: enmu.BLANK_BUFFER,
+  CONCAT_STATUS: enmu.CONCAT_STATUS,
   extend: extend,
   hash: hash,
   type: is.type,
