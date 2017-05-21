@@ -10,6 +10,8 @@
 
 'use strict';
 
+var Vinyl = require('vinyl');
+var colors = require('colors/safe');
 var async = require('./lib/async');
 var Cache = require('./lib/cache');
 var extend = require('./lib/extend');
@@ -21,6 +23,8 @@ var transport = require('./lib/transport');
 var util = require('./lib/util');
 
 module.exports = {
+  Vinyl: Vinyl,
+  colors: colors,
   async: async,
   Cache: Cache,
   extend: extend,
@@ -37,7 +41,6 @@ module.exports = {
   slice: util.slice,
   apply: util.apply,
   undef: util.undef,
-  colors: util.colors,
   isLocal: util.isLocal,
   resolve: util.resolve,
   normalize: util.normalize,
