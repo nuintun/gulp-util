@@ -40,7 +40,7 @@ module.exports = {
   cwd: util.cwd,
   slice: util.slice,
   apply: util.apply,
-  undef: util.undef,
+  exists: util.exists,
   isLocal: util.isLocal,
   resolve: util.resolve,
   normalize: util.normalize,
