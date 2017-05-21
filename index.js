@@ -30,7 +30,6 @@ module.exports = {
   extend: extend,
   hash: hash,
   type: is.type,
-  isArray: is.isArray,
   isString: is.isString,
   isFunction: is.isFunction,
   isPlainObject: is.isPlainObject,
