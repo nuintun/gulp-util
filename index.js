@@ -40,6 +40,7 @@ module.exports = {
   rename: rename,
   transport: transport,
   cwd: util.cwd,
+  debug: util.debug,
   slice: util.slice,
   apply: util.apply,
   isLocal: util.isLocal,
