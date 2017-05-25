@@ -43,6 +43,7 @@ module.exports = {
   slice: util.slice,
   apply: util.apply,
   debug: util.debug,
+  parseId: util.parseId,
   isLocal: util.isLocal,
   parseMap: util.parseMap,
   normalize: util.normalize,
