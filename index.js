@@ -52,5 +52,6 @@ module.exports = {
   throwError: util.throwError,
   isOutBound: util.isOutBound,
   pathFromCwd: util.pathFromCwd,
+  inspectError: util.inspectError,
   readonlyProperty: util.readonlyProperty
 };
