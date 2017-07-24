@@ -28,7 +28,6 @@ module.exports = {
   colors: colors,
   async: async,
   Cache: Cache,
-  BLANK_BUFFER: enmu.BLANK_BUFFER,
   CONCAT_STATUS: enmu.CONCAT_STATUS,
   extend: extend,
   hash: hash,
