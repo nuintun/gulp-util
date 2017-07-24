@@ -48,6 +48,8 @@ module.exports = {
   isLocal: util.isLocal,
   parseMap: util.parseMap,
   normalize: util.normalize,
+  wrapVinyl: util.wrapVinyl,
+  blankVinyl: util.blankVinyl,
   isRelative: util.isRelative,
   isAbsolute: util.isAbsolute,
   throwError: util.throwError,
