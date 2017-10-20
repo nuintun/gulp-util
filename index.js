@@ -1,6 +1,6 @@
 /*!
  * index
- * Version: 0.0.1
+ *
  * Date: 2017/05/19
  * https://github.com/nuintun/gulp-util
  *
@@ -11,7 +11,7 @@
 'use strict';
 
 var Vinyl = require('vinyl');
-var colors = require('colors/safe');
+var chalk = require('chalk');
 var async = require('./lib/async');
 var Cache = require('./lib/cache');
 var enmu = require('./lib/enmu');
@@ -25,7 +25,7 @@ var util = require('./lib/util');
 
 module.exports = {
   Vinyl: Vinyl,
-  colors: colors,
+  chalk: chalk,
   async: async,
   Cache: Cache,
   CONCAT_STATUS: enmu.CONCAT_STATUS,
