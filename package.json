@@ -7,10 +7,7 @@
     "type": "git",
     "url": "git+https://github.com/nuintun/gulp-util.git"
   },
-  "keywords": [
-    "gulp",
-    "util"
-  ],
+  "keywords": ["gulp", "util"],
   "author": "nuintun",
   "license": "MIT",
   "bugs": {
