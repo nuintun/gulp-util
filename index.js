@@ -15,7 +15,6 @@ const extend = require('./lib/extend');
 const hash = require('./lib/hash');
 const is = require('./lib/is');
 const plugins = require('./lib/plugins');
-const rename = require('./lib/rename');
 const transport = require('./lib/transport');
 const utils = require('./lib/utils');
 
@@ -26,7 +25,6 @@ module.exports = {
   async,
   Cache,
   extend,
-  rename,
   plugins,
   transport,
   type: is.type,
