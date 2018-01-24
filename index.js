@@ -9,7 +9,6 @@
 const Vinyl = require('vinyl');
 const chalk = require('chalk');
 const async = require('./lib/async');
-const Cache = require('./lib/cache');
 const enmu = require('./lib/enmu');
 const extend = require('./lib/extend');
 const hash = require('./lib/hash');
@@ -23,7 +22,6 @@ module.exports = {
   Vinyl,
   chalk,
   async,
-  Cache,
   extend,
   plugins,
   transport,
