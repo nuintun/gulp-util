@@ -47,5 +47,5 @@ module.exports = {
   pathFromCwd: utils.pathFromCwd,
   inspectError: utils.inspectError,
   readonlyProperty: utils.readonlyProperty,
-  CONCAT_STATUS: enmu.CONCAT_STATUS
+  BUNDLE_STATE: enmu.BUNDLE_STATE
 };
