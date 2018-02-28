@@ -1,6 +1,6 @@
 {
   "name": "@nuintun/gulp-util",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Utilities for gulp-cmd and gulp-css.",
   "main": "index.js",
   "repository": {
@@ -20,6 +20,6 @@
   "dependencies": {
     "vinyl": "^2.1.0",
     "debug": "^3.1.0",
-    "chalk": "^2.3.0"
+    "chalk": "^2.3.1"
   }
 }
