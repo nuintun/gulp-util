@@ -16,12 +16,14 @@ const is = require('./lib/is');
 const plugins = require('./lib/plugins');
 const transport = require('./lib/transport');
 const utils = require('./lib/utils');
+const logger = require('./lib/logger');
 
 module.exports = {
   hash,
   Vinyl,
   chalk,
   async,
+  logger,
   extend,
   plugins,
   transport,
