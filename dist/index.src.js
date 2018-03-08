@@ -11,8 +11,8 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var Vinyl = require('vinyl');
 var chalk = require('chalk');
-var util = require('util');
 var path = require('path');
 var debug = require('debug');
 var timestamp = require('time-stamp');
@@ -111,8 +111,6 @@ function isString(value) {
  * @license MIT
  * @version 2017/11/10
  */
-
-const cwd = process.cwd();
 
 /**
  * @function slice
@@ -270,25 +268,16 @@ function isOutBound(path$$1, base) {
   return OUTBOUND_RE.test(path.relative(base, path$$1));
 }
 
+const cwd = process.cwd();
+
 /**
- * @function pathFromCwd
+ * @function path2cwd
  * @description Get relative path from cwd
  * @param {string} path
  * @returns {string}
  */
-function pathFromCwd(path$$1) {
+function path2cwd(path$$1) {
   return normalize(path.relative(cwd, path$$1)) || './';
-}
-
-/**
- * @function throwError
- * @description Plugin error
- * @returns {void}
- */
-function throwError() {
-  const message = apply(util.format, null, slice(arguments));
-
-  throw new Error(message);
 }
 
 /**
@@ -368,22 +357,31 @@ function apply(fn, context, args) {
   }
 }
 
-const ERROR_FORMAT_RE = /^\{\s*|\}\s*$/g;
-
 /**
- * @function inspectError
- * @description Inspect error
- * @param {Error} error
- * @returns {string}
+ *
+ * @param {Vinyl} vinyl
+ * @param {Iterable} plugins
+ * @param {string} hook
+ * @returns {Vinyl}
  */
-function inspectError(error) {
-  return util.inspect(error).replace(ERROR_FORMAT_RE, '');
+async function pipeline(vinyl, plugins, hook) {
+  for (let plugin in plugins) {
+    const returned = plugin[hook](vinyl);
+
+    if (Vinyl.isVinyl(returned)) {
+      throw new TypeError(`The hook '${hook}' in plugin '${plugin.name}' must be returned a vinyl file.`);
+    }
+
+    vinyl = returned;
+  }
+
+  return vinyl;
 }
 
 /**
- * @module hash
+ * @module bundler
  * @license MIT
- * @version 2017/11/10
+ * @version 2018/03/08
  */
 
 /**
@@ -399,6 +397,54 @@ function hash(stat) {
 }
 
 /**
+ * @class Cache
+ */
+class Cache {
+  /**
+   * @constructor
+   */
+  constructor() {
+    this.cached = new Map();
+  }
+
+  /**
+   * @method set
+   * @param {Vinyl} vinyl
+   * @returns {Cache}
+   */
+  set(vinyl) {
+    const version = hash(vinyl.stat);
+
+    this.cached.set(vinyl.path, { version, vinyl });
+
+    return this;
+  }
+
+  /**
+   * @method get
+   * @param {Vinyl} vinyl
+   */
+  get(vinyl) {
+    const path$$1 = vinyl.path;
+
+    if (this.cached.has(path$$1)) {
+      const cached = this.cached.get(path$$1);
+
+      if (cached.version === hash(vinyl.stat)) {
+        return cached.vinyl;
+      }
+    }
+  }
+
+  /**
+   * @method clear
+   */
+  clear() {
+    this.cached.clear();
+  }
+}
+
+/**
  * @module debug
  * @license MIT
  * @version 2018/03/08
@@ -406,7 +452,7 @@ function hash(stat) {
 
 // File path relative cwd
 debug.formatters.r = function(value) {
-  return chalk.reset.magenta(pathFromCwd(value));
+  return chalk.reset.magenta(path2cwd(value));
 };
 
 // File path
@@ -533,7 +579,7 @@ function extend() {
  * @version 2017/11/10
  */
 
-exports.hash = hash;
+exports.Cache = Cache;
 exports.debug = debug$1;
 exports.logger = log;
 exports.extend = extend;
@@ -548,9 +594,8 @@ exports.isRelative = isRelative;
 exports.isAbsolute = isAbsolute;
 exports.isLocal = isLocal;
 exports.isOutBound = isOutBound;
-exports.pathFromCwd = pathFromCwd;
-exports.throwError = throwError;
+exports.path2cwd = path2cwd;
 exports.parseMap = parseMap;
 exports.readonly = readonly;
 exports.apply = apply;
-exports.inspectError = inspectError;
+exports.pipeline = pipeline;
