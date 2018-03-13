@@ -24,6 +24,7 @@ const banner = `/**
 rollup
   .rollup({
     input: 'index.js',
+    preferConst: true,
     external: ['fs', 'path', 'util', 'vinyl', 'debug', 'chalk', 'time-stamp']
   })
   .then(function(bundle) {
@@ -39,6 +40,7 @@ rollup
         format: 'cjs',
         strict: true,
         indent: true,
+        legacy: true,
         interop: false,
         banner: banner
       })

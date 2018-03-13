@@ -9,13 +9,11 @@
 
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var Vinyl = require('vinyl');
-var chalk = require('chalk');
-var path = require('path');
-var debug = require('debug');
-var timestamp = require('time-stamp');
+const Vinyl = require('vinyl');
+const chalk = require('chalk');
+const path = require('path');
+const debug = require('debug');
+const timestamp = require('time-stamp');
 
 /**
  * @module is
