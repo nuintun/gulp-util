@@ -27,7 +27,6 @@
     "time-stamp": "^2.0.0"
   },
   "devDependencies": {
-    "rollup": "^0.56.5",
-    "uglify-es": "^3.3.9"
+    "rollup": "^0.56.5"
   }
 }
