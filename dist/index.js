@@ -364,7 +364,7 @@ function apply(fn, context, args) {
  */
 async function pipeline(vinyl, plugins, hook) {
   for (let plugin in plugins) {
-    const returned = plugin[hook](vinyl);
+    const returned = await plugin[hook](vinyl);
 
     if (Vinyl.isVinyl(returned)) {
       throw new TypeError(`The hook '${hook}' in plugin '${plugin.name}' must be returned a vinyl file.`);
