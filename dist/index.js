@@ -12,6 +12,7 @@
 const Vinyl = require('vinyl');
 const chalk = require('chalk');
 const path = require('path');
+const crypto = require('crypto');
 const debug = require('debug');
 const timestamp = require('time-stamp');
 
@@ -136,35 +137,6 @@ function slice(args, start) {
   return rest;
 }
 
-const OUTBOUND_RE = /(?:^[\\\/]?)\.\.(?:[\\\/]|$)/;
-
-/**
- * @function parseId
- * @description Parse id form vinyl
- * @param {Vinyl} vinyl
- * @param {Object} wwwroot
- * @param {Object} base
- * @returns {string}
- */
-function parseId(vinyl, wwwroot, base) {
-  let path$$1 = path.relative(base, vinyl.path);
-
-  // Vinyl not in base dir, user wwwroot
-  if (OUTBOUND_RE.test(path$$1)) {
-    path$$1 = path.relative(wwwroot, vinyl.path);
-
-    // Vinyl not in wwwroot, throw error
-    if (OUTBOUND_RE.test(path$$1)) {
-      throwError('file %s is out of bound of wwwroot %s.', normalize(vinyl.path), normalize(wwwroot));
-    }
-
-    // Reset path
-    path$$1 = path.join('/', path$$1);
-  }
-
-  return normalize(path$$1);
-}
-
 const WINDOWS_PATH_RE = /\\/g;
 const SCHEME_SLASH_RE = /(:)?\/{2,}/;
 const DOT_RE = /\/\.\//g;
@@ -255,15 +227,44 @@ function isLocal(path$$1) {
   return !NONLOCAL_RE.test(path$$1);
 }
 
+const OUTBOUND_RE = /(?:^[\\\/]?)\.\.(?:[\\\/]|$)/;
+
 /**
- * @function isOutBound
- * @description Test path is out of bound of base
+ * @function isOutBounds
+ * @description Test path is out of bounds of root
  * @param {string} path
- * @param {string} base
+ * @param {string} root
  * @returns {boolean}
  */
-function isOutBound(path$$1, base) {
-  return OUTBOUND_RE.test(path.relative(base, path$$1));
+function isOutBounds(path$$1, root) {
+  return OUTBOUND_RE.test(path.relative(root, path$$1));
+}
+
+/**
+ * @function moduleId
+ * @description Parse module id form vinyl
+ * @param {Vinyl} vinyl
+ * @param {Object} root
+ * @param {Object} base
+ * @returns {string}
+ */
+function moduleId(vinyl, root, base) {
+  let path$$1 = path.relative(base, vinyl.path);
+
+  // Vinyl not in base dir, user root
+  if (OUTBOUND_RE.test(path$$1)) {
+    path$$1 = path.relative(root, vinyl.path);
+
+    // Vinyl not in root, throw error
+    if (OUTBOUND_RE.test(path$$1)) {
+      throw new RangeError(`File ${normalize(vinyl.path)} is out of bounds of root.`);
+    }
+
+    // Add /
+    path$$1 = path.join('/', path$$1);
+  }
+
+  return normalize(path$$1);
 }
 
 const cwd = process.cwd();
@@ -284,15 +285,15 @@ function path2cwd(path$$1) {
  * @param {string} id
  * @param {Function} map
  * @param {string} base
- * @param {string} wwwroot
+ * @param {string} root
  * @returns {string}
  */
-function parseMap(id, map, base, wwwroot) {
+function parseMap(id, map, base, root) {
   let src;
 
   // Calm map function
   if (isFunction(map)) {
-    src = map(id, base, wwwroot);
+    src = map(id, base, root);
   }
 
   // Must be string
@@ -377,6 +378,19 @@ async function pipeline(vinyl, plugins, hook) {
 }
 
 /**
+ * @module md5
+ * @license MIT
+ * @version 2018/03/16
+ */
+
+function md5(string) {
+  return crypto
+    .createHash('md5')
+    .update(string)
+    .digest('hex');
+}
+
+/**
  * @module bundler
  * @license MIT
  * @version 2018/03/08
@@ -402,7 +416,7 @@ class Cache {
    * @constructor
    */
   constructor() {
-    this.cached = new Map();
+    this.cache = new Map();
   }
 
   /**
@@ -413,7 +427,7 @@ class Cache {
   set(vinyl) {
     const version = hash(vinyl.stat);
 
-    this.cached.set(vinyl.path, { version, vinyl });
+    this.cache.set(vinyl.path, { version, vinyl });
 
     return this;
   }
@@ -425,11 +439,11 @@ class Cache {
   get(vinyl) {
     const path$$1 = vinyl.path;
 
-    if (this.cached.has(path$$1)) {
-      const cached = this.cached.get(path$$1);
+    if (this.cache.has(path$$1)) {
+      const cache = this.cache.get(path$$1);
 
-      if (cached.version === hash(vinyl.stat)) {
-        return cached.vinyl;
+      if (cache.version === hash(vinyl.stat)) {
+        return cache.vinyl;
       }
     }
   }
@@ -438,7 +452,7 @@ class Cache {
    * @method clear
    */
   clear() {
-    this.cached.clear();
+    this.cache.clear();
   }
 }
 
@@ -449,21 +463,21 @@ class Cache {
  */
 
 // File path relative cwd
-debug.formatters.r = function(value) {
+debug.formatters.C = function(value) {
   return chalk.reset.magenta(path2cwd(value));
 };
 
 // File path
-debug.formatters.p = function(value) {
+debug.formatters.f = function(value) {
   return chalk.reset.magenta(value);
 };
 
 // Normalized file path
-debug.formatters.P = function(value) {
+debug.formatters.F = function(value) {
   return chalk.reset.magenta(normalize(value));
 };
 
-function debug$1(namespace) {
+function debugging(namespace) {
   const logger = debug(namespace);
 
   // Set debug color use 6
@@ -630,8 +644,9 @@ function extend() {
  * @version 2017/11/10
  */
 
+exports.md5 = md5;
 exports.Cache = Cache;
-exports.debug = debug$1;
+exports.debug = debugging;
 exports.logger = log;
 exports.extend = extend;
 exports.typeOf = typeOf;
@@ -639,12 +654,12 @@ exports.isFunction = isFunction;
 exports.isPlainObject = isPlainObject;
 exports.isString = isString;
 exports.slice = slice;
-exports.parseId = parseId;
 exports.normalize = normalize;
 exports.isRelative = isRelative;
 exports.isAbsolute = isAbsolute;
 exports.isLocal = isLocal;
-exports.isOutBound = isOutBound;
+exports.isOutBounds = isOutBounds;
+exports.moduleId = moduleId;
 exports.path2cwd = path2cwd;
 exports.parseMap = parseMap;
 exports.readonly = readonly;
