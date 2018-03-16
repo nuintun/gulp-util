@@ -17,7 +17,7 @@
     "url": "https://github.com/nuintun/gulp-util/issues"
   },
   "engines": {
-    "node": ">=7.10.1"
+    "node": ">=7.6.0"
   },
   "homepage": "https://github.com/nuintun/gulp-util",
   "dependencies": {
