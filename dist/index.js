@@ -674,6 +674,31 @@ function extend() {
 }
 
 /**
+ * @module promisify
+ * @license MIT
+ * @version 2018/03/16
+ */
+
+/**
+ * @function promisify
+ * @param {Function} fn
+ * @returns {Promise}
+ */
+function promisify(fn) {
+  return function(...args) {
+    return new Promise((resolve, reject) => {
+      fn(...args, (error, ...args) => {
+        if (error) return reject(error);
+
+        if (args.length === 1) return resolve(args[0]);
+
+        resolve(args);
+      });
+    });
+  };
+}
+
+/**
  * @module index
  * @license MIT
  * @version 2017/11/10
@@ -684,6 +709,7 @@ exports.Cache = Cache;
 exports.debug = debugging;
 exports.logger = log;
 exports.extend = extend;
+exports.promisify = promisify;
 exports.typeOf = typeOf;
 exports.isFunction = isFunction;
 exports.isPlainObject = isPlainObject;
