@@ -378,6 +378,15 @@ async function pipeline(vinyl, plugins, hook) {
 }
 
 /**
+ * @function buffer
+ * @param {string} string
+ * @returns {Buffer}
+ */
+function buffer(string) {
+  return Buffer.from ? Buffer.from(string) : new Buffer(string);
+}
+
+/**
  * @module md5
  * @license MIT
  * @version 2018/03/16
@@ -665,3 +674,4 @@ exports.parseMap = parseMap;
 exports.readonly = readonly;
 exports.apply = apply;
 exports.pipeline = pipeline;
+exports.buffer = buffer;
