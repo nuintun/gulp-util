@@ -397,6 +397,22 @@ function buffer(string) {
 }
 
 /**
+ * @function vinyl
+ * @description Wrap an older vinyl version to an newer vinyl version
+ * @param {Vinyl} vinyl
+ * @returns {Vinyl}
+ */
+function vinyl(vinyl) {
+  return new Vinyl({
+    cwd: vinyl.cwd,
+    base: vinyl.base,
+    path: vinyl.path,
+    stat: vinyl.stat,
+    contents: vinyl.contents
+  });
+}
+
+/**
  * @module md5
  * @license MIT
  * @version 2018/03/16
@@ -686,3 +702,4 @@ exports.readonly = readonly;
 exports.apply = apply;
 exports.pipeline = pipeline;
 exports.buffer = buffer;
+exports.vinyl = vinyl;
