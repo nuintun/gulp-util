@@ -12,3 +12,4 @@ export { default as debug } from './lib/debug';
 export { default as logger } from './lib/logger';
 export { default as extend } from './lib/extend';
 export { default as promisify } from './lib/promisify';
+export { default as VinylFile } from './lib/vinyl-file';

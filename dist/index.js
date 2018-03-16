@@ -397,22 +397,6 @@ function buffer(string) {
 }
 
 /**
- * @function vinyl
- * @description Wrap an older vinyl version to an newer vinyl version
- * @param {Vinyl} vinyl
- * @returns {Vinyl}
- */
-function vinyl(vinyl) {
-  return new Vinyl({
-    cwd: vinyl.cwd,
-    base: vinyl.base,
-    path: vinyl.path,
-    stat: vinyl.stat,
-    contents: vinyl.contents
-  });
-}
-
-/**
  * @module md5
  * @license MIT
  * @version 2018/03/16
@@ -699,6 +683,34 @@ function promisify(fn) {
 }
 
 /**
+ * @module vinyl-file
+ * @license MIT
+ * @version 2018/03/16
+ */
+
+/**
+ * @class VinylFile
+ * @extends Vinyl
+ */
+class VinylFile extends Vinyl {
+  /**
+   * @function wrap
+   * @description Wrap an older vinyl version to an newer vinyl version
+   * @param {Vinyl} vinyl
+   * @returns {Vinyl}
+   */
+  static wrap(vinyl) {
+    return new Vinyl({
+      cwd: vinyl.cwd,
+      base: vinyl.base,
+      path: vinyl.path,
+      stat: vinyl.stat,
+      contents: vinyl.contents
+    });
+  }
+}
+
+/**
  * @module index
  * @license MIT
  * @version 2017/11/10
@@ -710,6 +722,7 @@ exports.debug = debugging;
 exports.logger = log;
 exports.extend = extend;
 exports.promisify = promisify;
+exports.VinylFile = VinylFile;
 exports.typeOf = typeOf;
 exports.isFunction = isFunction;
 exports.isPlainObject = isPlainObject;
@@ -728,4 +741,3 @@ exports.readonly = readonly;
 exports.apply = apply;
 exports.pipeline = pipeline;
 exports.buffer = buffer;
-exports.vinyl = vinyl;
