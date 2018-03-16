@@ -137,13 +137,23 @@ function slice(args, start) {
   return rest;
 }
 
-const WINDOWS_PATH_RE = /\\/g;
-const SCHEME_SLASH_RE = /(:)?\/{2,}/;
 const DOT_RE = /\/\.\//g;
+const XSS_RE = /^\/(\.\.\/)+/;
+const WINDOWS_SEPARATOR_RE = /\\/g;
+const SCHEME_SLASH_RE = /(:)?\/{2,}/;
 const MULTI_SLASH_RE = /([^:])\/{2,}/g;
 // DOUBLE_DOT_RE matches a/b/c//../d path correctly only if replace // with / first
 const DOUBLE_DOT_RE = /([^/]+)\/\.\.(?:\/|$)/g;
-const XSS_RE = /^\/(\.\.\/)+/;
+
+/**
+ * @function unixify
+ * @description Convert path separators to posix/unix-style forward slashes.
+ * @param {string} path
+ * @returns {string}
+ */
+function unixify(path$$1) {
+  return path$$1.replace(WINDOWS_SEPARATOR_RE, '/');
+}
 
 /**
  * @function normalize
@@ -153,7 +163,7 @@ const XSS_RE = /^\/(\.\.\/)+/;
  */
 function normalize(path$$1) {
   // \a\b\.\c\.\d ==> /a/b/./c/./d
-  path$$1 = path$$1.replace(WINDOWS_PATH_RE, '/');
+  path$$1 = unixify(path$$1);
 
   // :///a/b/c ==> ://a/b/c
   path$$1 = path$$1.replace(SCHEME_SLASH_RE, '$1//');
@@ -663,6 +673,7 @@ exports.isFunction = isFunction;
 exports.isPlainObject = isPlainObject;
 exports.isString = isString;
 exports.slice = slice;
+exports.unixify = unixify;
 exports.normalize = normalize;
 exports.isRelative = isRelative;
 exports.isAbsolute = isAbsolute;
