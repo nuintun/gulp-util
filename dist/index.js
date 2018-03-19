@@ -416,17 +416,17 @@ function md5(string) {
 
 // File path relative cwd
 debug.formatters.C = function(value) {
-  return chalk.reset.magenta(path2cwd(value));
+  return chalk.magenta(path2cwd(value));
 };
 
 // File path
 debug.formatters.f = function(value) {
-  return chalk.reset.magenta(value);
+  return chalk.magenta(value);
 };
 
 // Normalized file path
 debug.formatters.F = function(value) {
-  return chalk.reset.magenta(normalize(value));
+  return chalk.magenta(normalize(value));
 };
 
 function debugging(namespace) {
@@ -449,7 +449,7 @@ function debugging(namespace) {
  * @returns {string}
  */
 function getTimestamp() {
-  return `[${chalk.reset.gray(timestamp('HH:mm:ss'))}]`;
+  return `[${chalk.gray(timestamp('HH:mm:ss'))}]`;
 }
 
 /**
