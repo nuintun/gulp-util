@@ -293,16 +293,16 @@ function path2cwd(path$$1) {
  * @function parseMap
  * @description Parse map
  * @param {string} id
- * @param {string} referer
+ * @param {string} resolved
  * @param {Function} map
  * @returns {string}
  */
-function parseMap(id, referer, map) {
+function parseMap(id, resolved, map) {
   let src;
 
   // Calm map function
   if (isFunction(map)) {
-    src = map(id, referer);
+    src = map(id, resolved);
   }
 
   // Must be string
