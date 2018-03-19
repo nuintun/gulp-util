@@ -649,6 +649,7 @@ class VinylFile extends Vinyl {
  * @version 2017/11/10
  */
 
+exports.chalk = chalk;
 exports.md5 = md5;
 exports.debug = debugging;
 exports.logger = log;
