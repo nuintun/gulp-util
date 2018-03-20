@@ -259,7 +259,7 @@ const cwd = process.cwd();
  * @returns {string}
  */
 function path2cwd(path$$1) {
-  return normalize(path.relative(cwd, path$$1)) || './';
+  return normalize(path.relative(cwd, path$$1)) || '.';
 }
 
 /**
