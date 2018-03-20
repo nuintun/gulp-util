@@ -250,25 +250,6 @@ function isOutBounds(path$$1, root) {
   return OUTBOUND_RE.test(path.relative(root, path$$1));
 }
 
-/**
- * @function moduleId
- * @description Parse module id form vinyl
- * @param {Vinyl} vinyl
- * @param {Object} base
- * @returns {string}
- */
-function moduleId(vinyl, base) {
-  const src = vinyl.path;
-  const path$$1 = path.relative(base, src);
-
-  // Vinyl not in base dir, user root
-  if (OUTBOUND_RE.test(path$$1)) {
-    throw new RangeError(`Module ${normalize(src)} is out of bounds of base.`);
-  }
-
-  return normalize(path$$1);
-}
-
 const cwd = process.cwd();
 
 /**
@@ -659,7 +640,6 @@ exports.isRelative = isRelative;
 exports.isAbsolute = isAbsolute;
 exports.isLocal = isLocal;
 exports.isOutBounds = isOutBounds;
-exports.moduleId = moduleId;
 exports.path2cwd = path2cwd;
 exports.parseMap = parseMap;
 exports.readonly = readonly;
