@@ -254,24 +254,16 @@ function isOutBounds(path$$1, root) {
  * @function moduleId
  * @description Parse module id form vinyl
  * @param {Vinyl} vinyl
- * @param {Object} root
  * @param {Object} base
  * @returns {string}
  */
-function moduleId(vinyl, root, base) {
-  let path$$1 = path.relative(base, vinyl.path);
+function moduleId(vinyl, base) {
+  const src = vinyl.path;
+  const path$$1 = path.relative(base, src);
 
   // Vinyl not in base dir, user root
   if (OUTBOUND_RE.test(path$$1)) {
-    path$$1 = path.relative(root, vinyl.path);
-
-    // Vinyl not in root, throw error
-    if (OUTBOUND_RE.test(path$$1)) {
-      throw new RangeError(`File ${normalize(vinyl.path)} is out of bounds of root.`);
-    }
-
-    // Add /
-    path$$1 = path.join('/', path$$1);
+    throw new RangeError(`Module ${normalize(src)} is out of bounds of base.`);
   }
 
   return normalize(path$$1);
