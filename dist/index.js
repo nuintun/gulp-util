@@ -348,7 +348,7 @@ function apply(fn, context, args) {
  * @returns {Buffer}
  */
 async function pipeline(plugins, hook, path$$1, contents, options) {
-  for (let plugin in plugins) {
+  for (let plugin of plugins) {
     const actuator = plugin[hook];
 
     // If actuator exist
