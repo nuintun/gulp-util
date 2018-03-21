@@ -342,28 +342,30 @@ function apply(fn, context, args) {
  * @function pipeline
  * @param {Iterable} plugins
  * @param {string} hook
- * @param {Vinyl} vinyl
- * @returns {Vinyl}
+ * @param {string} path
+ * @param {Buffer} contents
+ * @param {Object} options
+ * @returns {Buffer}
  */
-async function pipeline(plugins, hook, vinyl) {
+async function pipeline(plugins, hook, path$$1, contents, options) {
   for (let plugin in plugins) {
     const actuator = plugin[hook];
 
     // If actuator exist
     if (actuator) {
-      const returned = await actuator(vinyl);
+      const buffer = await actuator(path$$1, contents, options);
 
       // Valid returned
-      if (Vinyl.isVinyl(returned)) {
-        throw new TypeError(`The hook '${hook}' in plugin '${plugin.name}' must be returned a vinyl file.`);
+      if (!Buffer.isBuffer(buffer)) {
+        throw new TypeError(`The hook '${hook}' in plugin '${plugin.name}' must be returned a buffer.`);
       }
 
       // Override vinyl
-      vinyl = returned;
+      contents = buffer;
     }
   }
 
-  return vinyl;
+  return contents;
 }
 
 /**
