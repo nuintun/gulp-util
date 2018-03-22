@@ -12,98 +12,51 @@
 const Vinyl = require('vinyl');
 const chalk = require('chalk');
 const path = require('path');
-const crypto = require('crypto');
-const debug = require('debug');
 const timestamp = require('time-stamp');
 
 /**
- * @module is
+ * @module typpy
  * @license MIT
- * @version 2017/11/10
+ * @version 2018/03/22
+ * @see https://github.com/IonicaBizau/typpy
  */
-
-const EXTRACT_TYPE_RE = /\[object (.+)\]/i;
-const toString = Object.prototype.toString;
-const getPrototypeOf = Object.getPrototypeOf;
-const hasOwnProperty = Object.prototype.hasOwnProperty;
-const fnToString = hasOwnProperty.toString;
-const objectFunctionString = fnToString.call(Object);
 
 /**
- * @function typeOf
- * @param {any} value
- * @returns {string}
+ * @function typpy
+ * @description Gets the type of the input value or compares it with a provided type
+ * @param {Anything} input The input value
+ * @param {Constructor|String} target The target type
+ * @returns {String|Boolean}
  */
-function typeOf(value) {
-  // Get real type
-  let type = toString.call(value);
+function typpy(input, target) {
+  // If only one arguments, return string type
+  if (arguments.length === 1) return typpy.typeof(input, false);
 
-  type = type.replace(EXTRACT_TYPE_RE, '$1').toLowerCase();
+  // If input is NaN, use special check
+  if (input !== input) return target !== target || target === 'nan';
 
-  // Is nan and infinity
-  if (type === 'number') {
-    // Is nan
-    if (value !== value) {
-      return 'nan';
-    }
-
-    // Is infinity
-    if (value === Infinity || value === -Infinity) {
-      return 'infinity';
-    }
-  }
-
-  // Return type
-  return type;
+  // Other
+  return typpy.typeof(input, typpy.typeof(target, true) !== String) === target;
 }
 
 /**
- * @function isFunction
- * @description Is function
- * @param {any} value
- * @returns {boolean}
+ * @function typeof
+ * @description Gets the type of the input value. This is used internally
+ * @param {Anything} input The input value
+ * @param {Boolean} ctor A flag to indicate if the return value should be a string or not
+ * @returns {Constructor|String}
  */
-function isFunction(value) {
-  return typeof value === 'function';
-}
+typpy.typeof = function(input, ctor) {
+  // NaN
+  if (input !== input) return ctor ? NaN : 'nan';
+  // Null
+  if (null === input) return ctor ? null : 'null';
+  // Undefined
+  if (undefined === input) return ctor ? undefined : 'undefined';
 
-/**
- * @function isPlainObject
- * @description Is plain object
- * @param {any} value
- * @returns {boolean}
- */
-function isPlainObject(value) {
-  let proto, ctor;
-
-  // Detect obvious negatives
-  if (!value || typeOf(value) !== 'object') {
-    return false;
-  }
-
-  // Proto
-  proto = getPrototypeOf(value);
-
-  // Objects with no prototype (e.g., `Object.create( null )`) are plain
-  if (!proto) {
-    return true;
-  }
-
-  // Objects with prototype are plain iff they were constructed by a global Object function
-  ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
-
-  return typeof ctor === 'function' && fnToString.call(ctor) === objectFunctionString;
-}
-
-/**
- * @function isString
- * @description Is string
- * @param {any} value
- * @returns {boolean}
- */
-function isString(value) {
-  return typeOf(value) === 'string';
-}
+  // Other
+  return ctor ? input.constructor : input.constructor.name.toLowerCase();
+};
 
 /**
  * @module utils
@@ -274,41 +227,16 @@ function parseMap(id, resolved, map) {
   let src;
 
   // Calm map function
-  if (isFunction(map)) {
+  if (typpy(map, Function)) {
     src = map(id, resolved);
   }
 
   // Must be string
-  if (!src || !isString(src)) {
+  if (!src || !typpy(src, String)) {
     return id;
   }
 
   return src;
-}
-
-/**
- * @function readonly
- * @description Define a readonly property
- * @param {Object} object
- * @param {string} prop
- * @param {any} value
- * @returns {void}
- */
-function readonly(object, prop, value) {
-  const configure = {
-    __proto__: null,
-    writable: false,
-    enumerable: true,
-    configurable: false
-  };
-
-  // Set value
-  if (arguments.length >= 3) {
-    configure.value = value;
-  }
-
-  // Define property
-  Object.defineProperty(object, prop, configure);
 }
 
 /**
@@ -378,46 +306,98 @@ function buffer(string) {
 }
 
 /**
- * @module md5
+ * @module attrs
  * @license MIT
- * @version 2018/03/16
+ * @version 2018/03/22
  */
 
-function md5(string) {
-  return crypto
-    .createHash('md5')
-    .update(string)
-    .digest('hex');
+/**
+ * @function checkTypesOK
+ * @param {Array} types
+ * @param {any} value
+ * @returns {boolean}
+ */
+function checkTypesOK(types, value) {
+  return types.some(type => typpy(value, type));
 }
 
 /**
- * @module debug
- * @license MIT
- * @version 2018/03/08
+ * @function matchRules
+ * @param {any} source
+ * @param {string} sourceKey
+ * @param {Object} rules
+ * @param {string} ruleKey
  */
+function matchRules(source, sourceKey, rules, ruleKey) {
+  const rule = rules[ruleKey];
+  const message = typpy(rule.message, String) ? rule.message.replace(/%s/g, ruleKey) : null;
 
-// File path relative cwd
-debug.formatters.C = function(value) {
-  return chalk.magenta(path2cwd(value));
-};
+  // Required
+  if (rule.required && !source.hasOwnProperty(sourceKey)) {
+    throw new Error(message || `Attr ${ruleKey} is required!`);
+  }
 
-// File path
-debug.formatters.f = function(value) {
-  return chalk.magenta(value);
-};
+  // Get current
+  const current = source[sourceKey];
+  // Get types
+  const types = Array.isArray(rule.type) ? rule.type : [rule.type];
 
-// Normalized file path
-debug.formatters.F = function(value) {
-  return chalk.magenta(normalize(value));
-};
+  // Not passed
+  if (!checkTypesOK(types, current)) {
+    // Has default value
+    if (rule.hasOwnProperty('default') && checkTypesOK(types, rule.default)) {
+      return (source[sourceKey] = rule.default);
+    }
 
-function debugging(namespace) {
-  const logger = debug(namespace);
+    // Throw error
+    throw new TypeError(message || `Attr ${ruleKey} not valid!`);
+  }
+}
 
-  // Set debug color use 6
-  logger.color = 6;
+/**
+ * @function attrs
+ * @param {Object} source
+ * @param {Object} rules
+ * @returns {object}
+ */
+function attrs(source, rules) {
+  // Visit cache
+  const visited = new Set();
 
-  return logger;
+  // Visit rules
+  Object.keys(rules).forEach(key => {
+    if (typpy(key, String)) {
+      let current = source;
+      const attrs = key.split('.');
+
+      // Visit attrs
+      return attrs.reduce((attrs, attr) => {
+        attrs.push(attr);
+
+        // Get key
+        const key = attrs.join('.');
+
+        // Hit cache
+        if (visited.has(key)) return attrs;
+
+        // Add cache
+        visited.add(key);
+
+        // Match rules
+        matchRules(current, attr, rules, key);
+
+        // Move current cursor
+        current = current[attr];
+
+        return attrs;
+      }, []);
+    }
+
+    // Rule key not a string
+    matchRules(source, key, rules, key);
+  });
+
+  return source;
 }
 
 /**
@@ -500,79 +480,6 @@ log.warn = warn;
 log.error = error;
 
 /**
- * @module extend
- * @license MIT
- * @version 2017/11/10
- */
-
-// Undefined
-const undef = void 0;
-
-/**
- * @function extend
- * @returns {Object}
- */
-function extend() {
-  let i = 1;
-  let deep = false;
-  const length = arguments.length;
-  let target = arguments[0] || {};
-  let options, name, src, copy, copyIsArray, clone;
-
-  // Handle a deep copy situation
-  if (typeof target === 'boolean') {
-    deep = target;
-    // Skip the boolean and the target
-    target = arguments[i++] || {};
-  }
-
-  // Handle case when target is a string or something (possible in deep copy)
-  if (typeof target !== 'object' && !isFunction(target)) {
-    target = {};
-  }
-
-  for (; i < length; i++) {
-    // Only deal with non-null/undefined values
-    if ((options = arguments[i]) != null) {
-      // Extend the base object
-      for (name in options) {
-        // Only copy own property
-        if (!options.hasOwnProperty(name)) {
-          continue;
-        }
-
-        src = target[name];
-        copy = options[name];
-
-        // Prevent never-ending loop
-        if (target === copy) {
-          continue;
-        }
-
-        // Recurse if we're merging plain objects or arrays
-        if (deep && copy && (isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
-          if (copyIsArray) {
-            copyIsArray = false;
-            clone = src && Array.isArray(src) ? src : [];
-          } else {
-            clone = src && isPlainObject(src) ? src : {};
-          }
-
-          // Never move original objects, clone them
-          target[name] = extend(deep, clone, copy);
-        } else if (copy !== undef) {
-          // Don't bring in undefined values
-          target[name] = copy;
-        }
-      }
-    }
-  }
-
-  // Return the modified object
-  return target;
-}
-
-/**
  * @module promisify
  * @license MIT
  * @version 2018/03/16
@@ -632,16 +539,11 @@ class VinylFile extends Vinyl {
  */
 
 exports.chalk = chalk;
-exports.md5 = md5;
-exports.debug = debugging;
+exports.typpy = typpy;
+exports.attrs = attrs;
 exports.logger = log;
-exports.extend = extend;
 exports.promisify = promisify;
 exports.VinylFile = VinylFile;
-exports.typeOf = typeOf;
-exports.isFunction = isFunction;
-exports.isPlainObject = isPlainObject;
-exports.isString = isString;
 exports.slice = slice;
 exports.unixify = unixify;
 exports.normalize = normalize;
@@ -651,7 +553,6 @@ exports.isLocal = isLocal;
 exports.isOutBounds = isOutBounds;
 exports.path2cwd = path2cwd;
 exports.parseMap = parseMap;
-exports.readonly = readonly;
 exports.apply = apply;
 exports.pipeline = pipeline;
 exports.buffer = buffer;
