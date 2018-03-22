@@ -312,6 +312,16 @@ function buffer(string) {
  */
 
 /**
+ * @function formatMessage
+ * @param {any} message
+ * @param {string} keys
+ * @returns {string|null}
+ */
+function formatMessage(message, keys) {
+  return typpy(message, String) ? message.replace(/%s/g, keys) : null;
+}
+
+/**
  * @function checkTypesOK
  * @param {Array} types
  * @param {any} value
@@ -330,11 +340,10 @@ function checkTypesOK(types, value) {
  */
 function matchRules(source, sourceKey, rules, ruleKey) {
   const rule = rules[ruleKey];
-  const message = typpy(rule.message, String) ? rule.message.replace(/%s/g, ruleKey) : null;
 
   // Required
   if (rule.required && !source.hasOwnProperty(sourceKey)) {
-    throw new Error(message || `Attr ${ruleKey} is required!`);
+    throw new Error(formatMessage(rule.onRequired, ruleKey) || `Attr ${ruleKey} is required!`);
   }
 
   // Get current
@@ -350,7 +359,7 @@ function matchRules(source, sourceKey, rules, ruleKey) {
     }
 
     // Throw error
-    throw new TypeError(message || `Attr ${ruleKey} not valid!`);
+    throw new TypeError(formatMessage(rule.onTypeError, ruleKey) || `Attr ${ruleKey} is invalid!`);
   }
 }
 
@@ -371,24 +380,25 @@ function attrs(source, rules) {
       const attrs = key.split('.');
 
       // Visit attrs
-      return attrs.reduce((attrs, attr) => {
-        attrs.push(attr);
+      return attrs.reduce((attrs, key) => {
+        // Add key
+        attrs.push(key);
 
-        // Get key
-        const key = attrs.join('.');
+        // Get keys
+        const keys = attrs.join('.');
 
         // Hit cache
-        if (visited.has(key)) return attrs;
-
-        // Add cache
-        visited.add(key);
-
-        // Match rules
-        matchRules(current, attr, rules, key);
+        if (!visited.has(keys)) {
+          // Add cache
+          visited.add(keys);
+          // Match rules
+          matchRules(current, key, rules, keys);
+        }
 
         // Move current cursor
-        current = current[attr];
+        current = current[key];
 
+        // Return attrs
         return attrs;
       }, []);
     }
