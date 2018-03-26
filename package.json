@@ -24,7 +24,7 @@
     "chalk": "^2.3.2",
     "vinyl": "^2.1.0",
     "time-stamp": "^2.0.0",
-    "inspect-attrs": "^0.0.2"
+    "inspect-attrs": "^0.1.0"
   },
   "devDependencies": {
     "rollup": "^0.57.1",
