@@ -6,6 +6,7 @@
 
 'use strict';
 
+const fs = require('fs-extra');
 const rollup = require('rollup');
 const pkg = require('./package.json');
 
@@ -15,6 +16,8 @@ const pkg = require('./package.json');
  * @param {Object} outputOptions
  */
 async function build(inputOptions, outputOptions) {
+  await fs.remove('dist');
+
   const bundle = await rollup.rollup(inputOptions);
 
   await bundle.write(outputOptions);
@@ -35,7 +38,7 @@ const banner = `/**
 const inputOptions = {
   input: 'index.js',
   preferConst: true,
-  external: ['fs', 'path', 'util', 'crypto', 'vinyl', 'debug', 'chalk', 'time-stamp']
+  external: ['fs', 'path', 'util', 'crypto', 'vinyl', 'debug', 'chalk', 'time-stamp', 'inspect-attrs']
 };
 
 const outputOptions = {

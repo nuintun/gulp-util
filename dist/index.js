@@ -11,52 +11,9 @@
 
 const Vinyl = require('vinyl');
 const chalk = require('chalk');
+const inspectAttrs = require('inspect-attrs');
 const path = require('path');
 const timestamp = require('time-stamp');
-
-/**
- * @module typpy
- * @license MIT
- * @version 2018/03/22
- * @see https://github.com/IonicaBizau/typpy
- */
-
-/**
- * @function typpy
- * @description Gets the type of the input value or compares it with a provided type
- * @param {Anything} input The input value
- * @param {Constructor|String} target The target type
- * @returns {String|Boolean}
- */
-function typpy(input, target) {
-  // If only one arguments, return string type
-  if (arguments.length === 1) return typpy.typeof(input, false);
-
-  // If input is NaN, use special check
-  if (input !== input) return target !== target || target === 'nan';
-
-  // Other
-  return typpy.typeof(input, typpy.typeof(target, true) !== String) === target;
-}
-
-/**
- * @function typeof
- * @description Gets the type of the input value. This is used internally
- * @param {Anything} input The input value
- * @param {Boolean} ctor A flag to indicate if the return value should be a string or not
- * @returns {Constructor|String}
- */
-typpy.typeof = function(input, ctor) {
-  // NaN
-  if (input !== input) return ctor ? NaN : 'nan';
-  // Null
-  if (null === input) return ctor ? null : 'null';
-  // Undefined
-  if (undefined === input) return ctor ? undefined : 'undefined';
-
-  // Other
-  return ctor ? input.constructor : input.constructor.name.toLowerCase();
-};
 
 /**
  * @module utils
@@ -227,12 +184,12 @@ function parseMap(id, resolved, map) {
   let src;
 
   // Calm map function
-  if (typpy(map, Function)) {
+  if (inspectAttrs.typpy(map, Function)) {
     src = map(id, resolved);
   }
 
   // Must be string
-  if (!src || !typpy(src, String)) {
+  if (!src || !inspectAttrs.typpy(src, String)) {
     return id;
   }
 
@@ -303,111 +260,6 @@ async function pipeline(plugins, hook, path$$1, contents, options) {
  */
 function buffer(string) {
   return Buffer.from ? Buffer.from(string) : new Buffer(string);
-}
-
-/**
- * @module attrs
- * @license MIT
- * @version 2018/03/22
- */
-
-/**
- * @function formatMessage
- * @param {any} message
- * @param {string} keys
- * @returns {string|null}
- */
-function formatMessage(message, keys) {
-  return typpy(message, String) ? message.replace(/%s/g, keys) : null;
-}
-
-/**
- * @function checkTypesOK
- * @param {Array} types
- * @param {any} value
- * @returns {boolean}
- */
-function checkTypesOK(types, value) {
-  return types.some(type => typpy(value, type));
-}
-
-/**
- * @function matchRules
- * @param {any} source
- * @param {string} sourceKey
- * @param {Object} rules
- * @param {string} ruleKey
- */
-function matchRules(source, sourceKey, rules, ruleKey) {
-  const rule = rules[ruleKey];
-
-  // Required
-  if (rule.required && !source.hasOwnProperty(sourceKey)) {
-    throw new Error(formatMessage(rule.onRequired, ruleKey) || `Attr ${ruleKey} is required!`);
-  }
-
-  // Get current
-  const current = source[sourceKey];
-  // Get types
-  const types = Array.isArray(rule.type) ? rule.type : [rule.type];
-
-  // Not passed
-  if (!checkTypesOK(types, current)) {
-    // Has default value
-    if (rule.hasOwnProperty('default') && checkTypesOK(types, rule.default)) {
-      return (source[sourceKey] = rule.default);
-    }
-
-    // Throw error
-    throw new TypeError(formatMessage(rule.onTypeError, ruleKey) || `Attr ${ruleKey} is invalid!`);
-  }
-}
-
-/**
- * @function attrs
- * @param {Object} source
- * @param {Object} rules
- * @returns {object}
- */
-function attrs(source, rules) {
-  // Visit cache
-  const visited = new Set();
-
-  // Visit rules
-  Object.keys(rules).forEach(key => {
-    if (typpy(key, String)) {
-      let current = source;
-      const attrs = key.split('.');
-
-      // Visit attrs
-      return attrs.reduce((attrs, key) => {
-        // Add key
-        attrs.push(key);
-
-        // Get keys
-        const keys = attrs.join('.');
-
-        // Hit cache
-        if (!visited.has(keys)) {
-          // Add cache
-          visited.add(keys);
-          // Match rules
-          matchRules(current, key, rules, keys);
-        }
-
-        // Move current cursor
-        current = current[key];
-
-        // Return attrs
-        return attrs;
-      }, []);
-    }
-
-    // Rule key not a string
-    matchRules(source, key, rules, key);
-  });
-
-  return source;
 }
 
 /**
@@ -548,9 +400,12 @@ class VinylFile extends Vinyl {
  * @version 2017/11/10
  */
 
+// Get typpy
+const { typpy } = inspectAttrs;
+
 exports.chalk = chalk;
+exports.inspectAttrs = inspectAttrs;
 exports.typpy = typpy;
-exports.attrs = attrs;
 exports.logger = log;
 exports.promisify = promisify;
 exports.VinylFile = VinylFile;
