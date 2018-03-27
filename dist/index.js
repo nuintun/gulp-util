@@ -48,7 +48,6 @@ function slice(args, start) {
 }
 
 const DOT_RE = /\/\.\//g;
-const XSS_RE = /^\/(\.\.\/)+/;
 const WINDOWS_SEPARATOR_RE = /\\/g;
 const SCHEME_SLASH_RE = /(:)?\/{2,}/;
 const MULTI_SLASH_RE = /([^:])\/{2,}/g;
@@ -103,9 +102,6 @@ function normalize(path$$1) {
       path$$1 = src;
     }
   } while (true);
-
-  // /../../../a ==> /a
-  path$$1 = path$$1.replace(XSS_RE, '/');
 
   // Get path
   return path$$1;
