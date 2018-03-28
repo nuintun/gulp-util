@@ -2,7 +2,7 @@
   "name": "@nuintun/gulp-util",
   "version": "0.1.2",
   "description": "Utilities for gulp-cmd and gulp-css.",
-  "main": "index.js",
+  "main": "index",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nuintun/gulp-util.git"
