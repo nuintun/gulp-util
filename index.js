@@ -13,6 +13,7 @@ const { typpy } = inspectAttrs;
 export * from './lib/utils';
 export { inspectAttrs, typpy };
 export { default as chalk } from 'chalk';
+export { default as isUrl } from 'is-url';
 export { default as logger } from './lib/logger';
 export { default as promisify } from './lib/promisify';
 export { default as VinylFile } from './lib/vinyl-file';

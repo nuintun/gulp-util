@@ -38,7 +38,7 @@ const banner = `/**
 const inputOptions = {
   input: 'index.js',
   preferConst: true,
-  external: ['fs', 'path', 'util', 'crypto', 'vinyl', 'debug', 'chalk', 'time-stamp', 'inspect-attrs']
+  external: ['fs', 'path', 'util', 'crypto', 'vinyl', 'debug', 'chalk', 'time-stamp', 'inspect-attrs', 'is-url']
 };
 
 const outputOptions = {

@@ -14,6 +14,7 @@ const chalk = require('chalk');
 const inspectAttrs = require('inspect-attrs');
 const path = require('path');
 const timestamp = require('time-stamp');
+const isUrl = require('is-url');
 
 /**
  * @module utils
@@ -22,46 +23,13 @@ const timestamp = require('time-stamp');
  */
 
 /**
- * @function slice
- * @description Faster slice arguments
- * @param {Array|arguments} args
- * @param {number} start
- * @returns {Array}
- * @see https://github.com/teambition/then.js
- */
-function slice(args, start) {
-  start = start >>> 0;
-
-  const length = args.length;
-
-  if (start >= length) {
-    return [];
-  }
-
-  const rest = new Array(length - start);
-
-  while (length-- > start) {
-    rest[length - start] = args[length];
-  }
-
-  return rest;
-}
-
-const DOT_RE = /\/\.\//g;
-const WINDOWS_SEPARATOR_RE = /\\/g;
-const SCHEME_SLASH_RE = /(:)?\/{2,}/;
-const MULTI_SLASH_RE = /([^:])\/{2,}/g;
-// DOUBLE_DOT_RE matches a/b/c//../d path correctly only if replace // with / first
-const DOUBLE_DOT_RE = /([^/]+)\/\.\.(?:\/|$)/g;
-
-/**
  * @function unixify
  * @description Convert path separators to posix/unix-style forward slashes.
  * @param {string} path
  * @returns {string}
  */
 function unixify(path$$1) {
-  return path$$1.replace(WINDOWS_SEPARATOR_RE, '/');
+  return path$$1.replace(/\\/g, '/');
 }
 
 /**
@@ -71,43 +39,14 @@ function unixify(path$$1) {
  * @returns {string}
  */
 function normalize(path$$1) {
-  // \a\b\.\c\.\d ==> /a/b/./c/./d
-  path$$1 = unixify(path$$1);
+  const dot = /^\.[\\/]/.test(path$$1);
 
-  // :///a/b/c ==> ://a/b/c
-  path$$1 = path$$1.replace(SCHEME_SLASH_RE, '$1//');
-
-  // /a/b/./c/./d ==> /a/b/c/d
-  path$$1 = path$$1.replace(DOT_RE, '/');
-
-  // @author wh1100717
-  // a//b/c ==> a/b/c
-  // ///a/b/c ==> //a/b/c
-  // a///b/////c ==> a/b/c
-  path$$1 = path$$1.replace(MULTI_SLASH_RE, '$1/');
-
-  // Transfer path
-  let src = path$$1;
-
-  // a/b/c/../../d ==> a/b/../d ==> a/d
-  do {
-    src = src.replace(DOUBLE_DOT_RE, (matched, dirname) => {
-      return dirname === '..' ? matched : '';
-    });
-
-    // Break
-    if (path$$1 === src) {
-      break;
-    } else {
-      path$$1 = src;
-    }
-  } while (true);
+  // Normalize path
+  path$$1 = unixify(path.normalize(path$$1));
 
   // Get path
-  return path$$1;
+  return dot && !path$$1.startsWith('../') ? `./${path$$1}` : path$$1;
 }
-
-const RELATIVE_RE = /^\.{1,2}[\\/]/;
 
 /**
  * @function isRelative
@@ -116,10 +55,8 @@ const RELATIVE_RE = /^\.{1,2}[\\/]/;
  * @returns {boolean}
  */
 function isRelative(path$$1) {
-  return RELATIVE_RE.test(path$$1);
+  return /^\.{1,2}[\\/]/.test(path$$1);
 }
-
-const ABSOLUTE_RE = /^[\\/](?:[^\\/]|$)/;
 
 /**
  * @function isAbsolute
@@ -128,22 +65,8 @@ const ABSOLUTE_RE = /^[\\/](?:[^\\/]|$)/;
  * @returns {boolean}
  */
 function isAbsolute(path$$1) {
-  return ABSOLUTE_RE.test(path$$1);
+  return /^[\\/](?:[^\\/]|$)/.test(path$$1);
 }
-
-const NONLOCAL_RE = /^(?:[a-z0-9.+-]+:)?\/\/|^data:\w+?\/\w+?[,;]/i;
-
-/**
- * @function isLocal
- * @description Test path is local path or not
- * @param {string} path
- * @returns {boolean}
- */
-function isLocal(path$$1) {
-  return !NONLOCAL_RE.test(path$$1);
-}
-
-const OUTBOUND_RE = /(?:^[\\\/]?)\.\.(?:[\\\/]|$)/;
 
 /**
  * @function isOutBounds
@@ -153,7 +76,7 @@ const OUTBOUND_RE = /(?:^[\\\/]?)\.\.(?:[\\\/]|$)/;
  * @returns {boolean}
  */
 function isOutBounds(path$$1, root) {
-  return OUTBOUND_RE.test(path.relative(root, path$$1));
+  return /(?:^[\\\/]?)\.\.(?:[\\\/]|$)/.test(path.relative(root, path$$1));
 }
 
 const cwd = process.cwd();
@@ -165,7 +88,7 @@ const cwd = process.cwd();
  * @returns {string}
  */
 function path2cwd(path$$1) {
-  return normalize(path.relative(cwd, path$$1)) || '.';
+  return unixify(path.relative(cwd, path$$1)) || '.';
 }
 
 /**
@@ -238,7 +161,9 @@ async function pipeline(plugins, hook, path$$1, contents, options) {
 
       // Valid returned
       if (!Buffer.isBuffer(buffer)) {
-        throw new TypeError(`The hook '${hook}' in plugin '${plugin.name}' must be returned a buffer.`);
+        const name = inspectAttrs.typpy(plugin.name, String) ? plugin.name : 'anonymous';
+
+        throw new TypeError(`The hook '${hook}' in plugin '${name}' must be returned a buffer.`);
       }
 
       // Override vinyl
@@ -256,6 +181,21 @@ async function pipeline(plugins, hook, path$$1, contents, options) {
  */
 function buffer(string) {
   return Buffer.from ? Buffer.from(string) : new Buffer(string);
+}
+
+/**
+ * @function combine
+ * @param {Set} bundles
+ * @returns {Buffer}
+ */
+function combine(bundles) {
+  const contents = [];
+
+  // Traverse bundles
+  bundles.forEach(bundle => contents.push(bundle.contents));
+
+  // Concat contents
+  return Buffer.concat(contents);
 }
 
 /**
@@ -401,19 +341,19 @@ const { typpy } = inspectAttrs;
 
 exports.chalk = chalk;
 exports.inspectAttrs = inspectAttrs;
+exports.isUrl = isUrl;
 exports.typpy = typpy;
 exports.logger = log;
 exports.promisify = promisify;
 exports.VinylFile = VinylFile;
-exports.slice = slice;
 exports.unixify = unixify;
 exports.normalize = normalize;
 exports.isRelative = isRelative;
 exports.isAbsolute = isAbsolute;
-exports.isLocal = isLocal;
 exports.isOutBounds = isOutBounds;
 exports.path2cwd = path2cwd;
 exports.parseMap = parseMap;
 exports.apply = apply;
 exports.pipeline = pipeline;
 exports.buffer = buffer;
+exports.combine = combine;
