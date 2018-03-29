@@ -4,7 +4,7 @@
  * @license MIT
  * @version 0.1.0
  * @description Utilities for gulp-cmd and gulp-css.
- * @see https://github.com/nuintun/gulp-util
+ * @see https://github.com/nuintun/gulp-util#readme
  */
 
 'use strict';

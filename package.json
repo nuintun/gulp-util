@@ -19,16 +19,16 @@
   "engines": {
     "node": ">=7.6.0"
   },
-  "homepage": "https://github.com/nuintun/gulp-util",
   "dependencies": {
     "chalk": "^2.3.2",
     "vinyl": "^2.1.0",
     "is-url": "^1.2.4",
     "time-stamp": "^2.0.0",
-    "inspect-attrs": "^0.3.0"
+    "inspect-attrs": "^0.3.3"
   },
   "devDependencies": {
     "rollup": "^0.57.1",
     "fs-extra": "^5.0.0"
-  }
+  },
+  "homepage": "https://github.com/nuintun/gulp-util#readme"
 }
