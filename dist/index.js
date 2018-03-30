@@ -149,7 +149,7 @@ function apply(fn, context, args) {
  * @param {string} path
  * @param {Buffer} contents
  * @param {Object} options
- * @returns {Buffer}
+ * @returns {string}
  */
 async function pipeline(plugins, hook, path$$1, contents, options) {
   for (let plugin of plugins) {
@@ -157,17 +157,17 @@ async function pipeline(plugins, hook, path$$1, contents, options) {
 
     // If actuator exist
     if (actuator) {
-      const buffer = await actuator(path$$1, contents, options);
+      const code = await actuator(path$$1, contents, options);
 
       // Valid returned
-      if (!Buffer.isBuffer(buffer)) {
+      if (!inspectAttrs.typpy(code, String)) {
         const name = inspectAttrs.typpy(plugin.name, String) ? plugin.name : 'anonymous';
 
-        throw new TypeError(`The hook '${hook}' in plugin '${name}' must be returned a buffer.`);
+        throw new TypeError(`The hook '${hook}' in plugin '${name}' must be returned a string.`);
       }
 
-      // Override vinyl
-      contents = buffer;
+      // Override contents
+      contents = code;
     }
   }
 
