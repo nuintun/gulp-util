@@ -12,9 +12,63 @@
 const Vinyl = require('vinyl');
 const chalk = require('chalk');
 const inspectAttrs = require('inspect-attrs');
+const fs = require('fs');
 const path = require('path');
 const timestamp = require('time-stamp');
 const isUrl = require('is-url');
+
+/**
+ * @module promisify
+ * @license MIT
+ * @version 2018/03/16
+ */
+
+/**
+ * @function promisify
+ * @param {Function} fn
+ * @returns {Promise}
+ */
+function promisify(fn) {
+  return function(...args) {
+    return new Promise((resolve, reject) => {
+      fn(...args, (error, ...args) => {
+        if (error) return reject(error);
+
+        if (args.length === 1) return resolve(args[0]);
+
+        resolve(args);
+      });
+    });
+  };
+}
+
+/**
+ * @module vinyl-file
+ * @license MIT
+ * @version 2018/03/16
+ */
+
+/**
+ * @class VinylFile
+ * @extends Vinyl
+ */
+class VinylFile extends Vinyl {
+  /**
+   * @function wrap
+   * @description Wrap an older vinyl version to an newer vinyl version
+   * @param {Vinyl} vinyl
+   * @returns {Vinyl}
+   */
+  static wrap(vinyl) {
+    return new Vinyl({
+      cwd: vinyl.cwd,
+      base: vinyl.base,
+      path: vinyl.path,
+      stat: vinyl.stat,
+      contents: vinyl.contents
+    });
+  }
+}
 
 /**
  * @module utils
@@ -147,7 +201,7 @@ function apply(fn, context, args) {
  * @param {Iterable} plugins
  * @param {string} hook
  * @param {string} path
- * @param {Buffer} contents
+ * @param {string} contents
  * @param {Object} options
  * @returns {string}
  */
@@ -196,6 +250,42 @@ function combine(bundles) {
 
   // Concat contents
   return Buffer.concat(contents);
+}
+
+// Promisify stat and readFile
+const fsReadStat = promisify(fs.stat);
+const fsReadFile = promisify(fs.readFile);
+
+/**
+ * @function fsSafeAccess
+ * @param {string} path
+ * @param {Number} mode
+ * @returns {boolean}
+ */
+function fsSafeAccess(path$$1, mode = fs.constants.R_OK) {
+  try {
+    fs.accessSync(path$$1, mode);
+  } catch (error) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * @function fetchModule
+ * @param {string} path
+ * @param {Object} options
+ * @returns {Vinyl}
+ */
+async function fetchModule(path$$1, options) {
+  // Read module
+  const base = options.base;
+  const stat = await fsReadStat(path$$1);
+  const contents = await fsReadFile(path$$1);
+
+  // Return a vinyl file
+  return new VinylFile({ base, path: path$$1, stat, contents });
 }
 
 /**
@@ -278,59 +368,6 @@ log.warn = warn;
 log.error = error;
 
 /**
- * @module promisify
- * @license MIT
- * @version 2018/03/16
- */
-
-/**
- * @function promisify
- * @param {Function} fn
- * @returns {Promise}
- */
-function promisify(fn) {
-  return function(...args) {
-    return new Promise((resolve, reject) => {
-      fn(...args, (error, ...args) => {
-        if (error) return reject(error);
-
-        if (args.length === 1) return resolve(args[0]);
-
-        resolve(args);
-      });
-    });
-  };
-}
-
-/**
- * @module vinyl-file
- * @license MIT
- * @version 2018/03/16
- */
-
-/**
- * @class VinylFile
- * @extends Vinyl
- */
-class VinylFile extends Vinyl {
-  /**
-   * @function wrap
-   * @description Wrap an older vinyl version to an newer vinyl version
-   * @param {Vinyl} vinyl
-   * @returns {Vinyl}
-   */
-  static wrap(vinyl) {
-    return new Vinyl({
-      cwd: vinyl.cwd,
-      base: vinyl.base,
-      path: vinyl.path,
-      stat: vinyl.stat,
-      contents: vinyl.contents
-    });
-  }
-}
-
-/**
  * @module index
  * @license MIT
  * @version 2017/11/10
@@ -357,3 +394,7 @@ exports.apply = apply;
 exports.pipeline = pipeline;
 exports.buffer = buffer;
 exports.combine = combine;
+exports.fsReadStat = fsReadStat;
+exports.fsReadFile = fsReadFile;
+exports.fsSafeAccess = fsSafeAccess;
+exports.fetchModule = fetchModule;
