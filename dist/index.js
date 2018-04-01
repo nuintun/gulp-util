@@ -151,22 +151,26 @@ function path2cwd(path$$1) {
  * @param {string} id
  * @param {string} resolved
  * @param {Function} map
+ * @param {Map} cache
  * @returns {string}
  */
-function parseMap(id, resolved, map) {
-  let src;
+function parseMap(id, resolved, map, cache) {
+  if (cache.has(resolved)) return cache.get(resolved);
+
+  let mapped = id;
 
   // Calm map function
   if (inspectAttrs.typpy(map, Function)) {
-    src = map(id, resolved);
+    mapped = map(id, resolved);
+
+    // Must be string
+    if (!inspectAttrs.typpy(mapped, String)) mapped = id;
   }
 
-  // Must be string
-  if (!src || !inspectAttrs.typpy(src, String)) {
-    return id;
-  }
+  // Set cache
+  cache.set(resolved, mapped);
 
-  return src;
+  return mapped;
 }
 
 /**
