@@ -151,14 +151,15 @@ function path2cwd(path$$1) {
  * @param {string} id
  * @param {string} resolved
  * @param {Function} map
+ * @param {...any} rest
  * @returns {string}
  */
-function parseMap(id, resolved, map) {
+function parseMap(id, resolved, map, ...rest) {
   let mapped = id;
 
   // Calm map function
   if (inspectAttrs.typpy(map, Function)) {
-    mapped = map(id, resolved);
+    mapped = map(id, resolved, ...rest);
 
     // Must be string
     if (!inspectAttrs.typpy(mapped, String)) mapped = id;
@@ -224,15 +225,6 @@ async function pipeline(plugins, hook, path$$1, contents, options) {
   }
 
   return contents;
-}
-
-/**
- * @function buffer
- * @param {string} string
- * @returns {Buffer}
- */
-function buffer(string) {
-  return Buffer.from ? Buffer.from(string) : new Buffer(string);
 }
 
 /**
@@ -390,7 +382,6 @@ exports.path2cwd = path2cwd;
 exports.parseMap = parseMap;
 exports.apply = apply;
 exports.pipeline = pipeline;
-exports.buffer = buffer;
 exports.combine = combine;
 exports.fsReadStat = fsReadStat;
 exports.fsReadFile = fsReadFile;
