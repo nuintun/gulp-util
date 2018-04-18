@@ -2,7 +2,7 @@
   "name": "@nuintun/gulp-util",
   "version": "0.2.0",
   "description": "Utilities for gulp-cmd and gulp-css.",
-  "main": "dist/index.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nuintun/gulp-util.git"
@@ -20,15 +20,18 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "chalk": "^2.3.2",
+    "chalk": "^2.4.0",
     "vinyl": "^2.1.0",
     "is-url": "^1.2.4",
     "time-stamp": "^2.0.0",
-    "inspect-attrs": "^0.3.3"
+    "inspect-attrs": "^0.4.2"
   },
   "devDependencies": {
-    "rollup": "^0.57.1",
+    "rollup": "^0.58.0",
     "fs-extra": "^5.0.0"
+  },
+  "scripts": {
+    "prepublishOnly": "node rollup.js"
   },
   "homepage": "https://github.com/nuintun/gulp-util#readme"
 }
