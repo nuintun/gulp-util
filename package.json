@@ -24,7 +24,7 @@
     "vinyl": "^2.1.0",
     "is-url": "^1.2.4",
     "time-stamp": "^2.0.0",
-    "inspect-attrs": "^0.4.2"
+    "inspect-attrs": "^0.4.3"
   },
   "devDependencies": {
     "rollup": "^0.58.2",
