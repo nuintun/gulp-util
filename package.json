@@ -7,7 +7,10 @@
     "type": "git",
     "url": "git+https://github.com/nuintun/gulp-util.git"
   },
-  "keywords": ["gulp", "util"],
+  "keywords": [
+    "gulp",
+    "util"
+  ],
   "author": {
     "name": "nuintun",
     "email": "nuintun@qq.com"
@@ -21,13 +24,13 @@
   },
   "dependencies": {
     "chalk": "^2.4.1",
-    "vinyl": "^2.1.0",
+    "vinyl": "^2.2.0",
     "is-url": "^1.2.4",
     "time-stamp": "^2.0.0",
-    "inspect-attrs": "^0.4.3"
+    "inspect-attrs": "^0.5.0"
   },
   "devDependencies": {
-    "rollup": "^0.59.4",
+    "rollup": "^0.62.0",
     "fs-extra": "^6.0.1"
   },
   "scripts": {

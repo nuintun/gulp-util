@@ -9,6 +9,8 @@
 
 'use strict';
 
+Object.defineProperty(exports, '__esModule', { value: true });
+
 const Vinyl = require('vinyl');
 const chalk = require('chalk');
 const inspectAttrs = require('inspect-attrs');
