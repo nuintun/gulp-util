@@ -12,10 +12,10 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 const Vinyl = require('vinyl');
-const chalk = require('chalk');
 const inspectAttrs = require('inspect-attrs');
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
+const chalk = require('chalk');
 const timestamp = require('time-stamp');
 const isUrl = require('is-url');
 
@@ -368,8 +368,8 @@ log.error = error;
 // Get typpy
 const { typpy } = inspectAttrs;
 
-exports.chalk = chalk;
 exports.inspectAttrs = inspectAttrs;
+exports.chalk = chalk;
 exports.isUrl = isUrl;
 exports.typpy = typpy;
 exports.logger = log;

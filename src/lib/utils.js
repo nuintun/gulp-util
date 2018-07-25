@@ -5,12 +5,11 @@
  */
 
 import Vinyl from 'vinyl';
-import chalk from 'chalk';
 import promisify from './promisify';
 import VinylFile from './vinyl-file';
 import { typpy } from 'inspect-attrs';
+import { relative, normalize as Pnormalize } from 'path';
 import { stat, readFile, accessSync, constants } from 'fs';
-import { join, relative, normalize as Pnormalize } from 'path';
 
 /**
  * @function unixify
