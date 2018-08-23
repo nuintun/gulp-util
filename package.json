@@ -26,11 +26,11 @@
     "chalk": "^2.4.1",
     "vinyl": "^2.2.0",
     "is-url": "^1.2.4",
-    "time-stamp": "^2.0.0",
-    "inspect-attrs": "^0.5.1"
+    "time-stamp": "^2.1.0",
+    "inspect-attrs": "^0.5.2"
   },
   "devDependencies": {
-    "rollup": "^0.63.4",
+    "rollup": "^0.64.1",
     "fs-extra": "^7.0.0"
   },
   "scripts": {
