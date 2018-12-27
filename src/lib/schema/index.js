@@ -15,8 +15,8 @@ const ajv = new Ajv({
   jsonPointers: true
 });
 
-errors(ajv);
 keywords(ajv, ['instanceof', 'typeof']);
+errors(ajv);
 
 /**
  * @function validateOptions
