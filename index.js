@@ -426,24 +426,31 @@ class ValidationError extends Error {
 
     this.name = 'ValidationError';
 
-    this.message = `${name || ''} Invalid Options\n\n`;
+    this.message = `${name || ''}\n\n`;
 
     this.errors = errors$$1.map(error => {
-      if (error.keyword === 'additionalProperties') {
-        error.dataPath = error.params.additionalProperty;
-      } else {
-        error.dataPath = error.dataPath.replace(/\//g, '.');
+      let dataPath = error.dataPath.replace(/^\//, '').replace(/\//g, '.');
+
+      switch (error.keyword) {
+        case 'required':
+          const required = error.params.missingProperty;
+
+          dataPath = dataPath ? `${dataPath}.${required}` : required;
+
+          this.message += `Missing options: ${dataPath}\n`;
+          break;
+        case 'additionalProperties':
+          const unknown = error.params.additionalProperty;
+
+          dataPath = dataPath ? `${dataPath}.${unknown}` : unknown;
+
+          this.message += `Unknown options: ${dataPath}\n`;
+          break;
+        default:
+          this.message += `Invalid options: ${dataPath} ${error.message}\n`;
       }
 
       return error;
-    });
-
-    this.errors.forEach(error => {
-      if (error.keyword === 'additionalProperties') {
-        this.message += `unknown options: ${error.dataPath}\n`;
-      } else {
-        this.message += `options${error.dataPath} ${error.message}\n`;
-      }
     });
 
     Error.captureStackTrace(this, this.constructor);
@@ -458,6 +465,7 @@ class ValidationError extends Error {
 
 const ajv = new Ajv({
   allErrors: true,
+  useDefaults: true,
   jsonPointers: true
 });
 
