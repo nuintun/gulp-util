@@ -5,9 +5,9 @@
  */
 
 import Vinyl from 'vinyl';
+import typpy from './typpy';
 import promisify from './promisify';
-import VinylFile from './vinyl-file';
-import { typpy } from 'inspect-attrs';
+import VinylFile from './VinylFile';
 import { relative, normalize as Pnormalize } from 'path';
 import { stat, readFile, accessSync, constants } from 'fs';
 

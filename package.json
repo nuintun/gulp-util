@@ -23,15 +23,17 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
+    "ajv": "^6.6.2",
     "chalk": "^2.4.1",
     "vinyl": "^2.2.0",
     "is-url": "^1.2.4",
-    "time-stamp": "^2.1.0",
-    "inspect-attrs": "^0.6.0"
+    "ajv-errors": "^1.0.1",
+    "time-stamp": "^2.2.0",
+    "ajv-keywords": "^3.2.0"
   },
   "devDependencies": {
-    "rollup": "^0.66.2",
-    "fs-extra": "^7.0.0"
+    "rollup": "^0.68.2",
+    "fs-extra": "^7.0.1"
   },
   "scripts": {
     "prepublishOnly": "node rollup.js"

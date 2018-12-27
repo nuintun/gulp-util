@@ -36,9 +36,22 @@ const banner = `/**
 `;
 
 const inputOptions = {
-  input: 'src/index.js',
   preferConst: true,
-  external: ['fs', 'path', 'util', 'crypto', 'vinyl', 'debug', 'chalk', 'time-stamp', 'inspect-attrs', 'is-url']
+  input: 'src/index.js',
+  external: [
+    'fs',
+    'ajv',
+    'path',
+    'util',
+    'vinyl',
+    'debug',
+    'chalk',
+    'crypto',
+    'is-url',
+    'time-stamp',
+    'ajv-errors',
+    'ajv-keywords'
+  ]
 };
 
 const outputOptions = {

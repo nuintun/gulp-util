@@ -1,5 +1,5 @@
 /**
- * @module vinyl-file
+ * @module VinylFile
  * @license MIT
  * @version 2018/03/16
  */

@@ -12,12 +12,58 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 const Vinyl = require('vinyl');
-const inspectAttrs = require('inspect-attrs');
 const path = require('path');
 const fs = require('fs');
 const chalk = require('chalk');
-const timestamp = require('time-stamp');
 const isUrl = require('is-url');
+const timestamp = require('time-stamp');
+const Ajv = require('ajv');
+const errors = require('ajv-errors');
+const keywords = require('ajv-keywords');
+
+/**
+ * @module typpy
+ * @license MIT
+ * @version 2018/03/26
+ * @see https://github.com/IonicaBizau/typpy
+ */
+
+/**
+ * @function typpy
+ * @description Gets the type of the input value or compares it with a provided type
+ * @param {Anything} input The input value
+ * @param {Constructor|String} target The target type
+ * @returns {String|Boolean}
+ */
+function typpy(input, target) {
+  // If only one arguments, return string type
+  if (arguments.length === 1) return typpy.typeof(input, false);
+
+  // If input is NaN, use special check
+  if (input !== input) return target !== target || target === 'nan';
+
+  // Other
+  return typpy.typeof(input, typpy.typeof(target, true) !== String) === target;
+}
+
+/**
+ * @function typeof
+ * @description Gets the type of the input value. This is used internally
+ * @param {Anything} input The input value
+ * @param {Boolean} ctor A flag to indicate if the return value should be a string or not
+ * @returns {Constructor|String}
+ */
+typpy.typeof = function(input, ctor) {
+  // NaN
+  if (input !== input) return ctor ? NaN : 'nan';
+  // Null
+  if (null === input) return ctor ? null : 'null';
+  // Undefined
+  if (undefined === input) return ctor ? undefined : 'undefined';
+
+  // Other
+  return ctor ? input.constructor : input.constructor.name.toLowerCase();
+};
 
 /**
  * @module promisify
@@ -45,7 +91,7 @@ function promisify(fn) {
 }
 
 /**
- * @module vinyl-file
+ * @module VinylFile
  * @license MIT
  * @version 2018/03/16
  */
@@ -160,11 +206,11 @@ function parseMap(id, resolved, map, ...rest) {
   let mapped = id;
 
   // Calm map function
-  if (inspectAttrs.typpy(map, Function)) {
+  if (typpy(map, Function)) {
     mapped = map(id, resolved, ...rest);
 
     // Must be string
-    if (!inspectAttrs.typpy(mapped, String)) mapped = id;
+    if (!typpy(mapped, String)) mapped = id;
   }
 
   return mapped;
@@ -215,8 +261,8 @@ async function pipeline(plugins, hook, path$$1, contents, options) {
       const code = await actuator(path$$1, contents, options);
 
       // Valid returned
-      if (!inspectAttrs.typpy(code, String)) {
-        const name = inspectAttrs.typpy(plugin.name, String) ? plugin.name : 'anonymous';
+      if (!typpy(code, String)) {
+        const name = typpy(plugin.name, String) ? plugin.name : 'anonymous';
 
         throw new TypeError(`The hook '${hook}' in plugin '${name}' must be returned a string.`);
       }
@@ -360,21 +406,84 @@ log.warn = warn;
 log.error = error;
 
 /**
+ * @module ValidationError
+ * @license MIT
+ * @version 2018/12/27
+ */
+
+/**
+ * @class ValidationError
+ * @extends Error
+ */
+class ValidationError extends Error {
+  /**
+   * @constructor
+   * @param {Array} errors
+   * @param {string} name
+   */
+  constructor(errors$$1, name) {
+    super();
+
+    this.name = 'ValidationError';
+
+    this.message = `${name || ''} Invalid Options\n\n`;
+
+    this.errors = errors$$1.map(error => {
+      error.dataPath = error.dataPath.replace(/\//g, '.');
+
+      return error;
+    });
+
+    this.errors.forEach(error => {
+      this.message += `options${error.dataPath} ${error.message}\n`;
+    });
+
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+/**
+ * @module index
+ * @license MIT
+ * @version 2018/12/27
+ */
+
+const ajv = new Ajv({
+  allErrors: true,
+  jsonPointers: true
+});
+
+errors(ajv);
+keywords(ajv, ['instanceof', 'typeof']);
+
+/**
+ * @function validateOptions
+ * @param {Object} schema
+ * @param {Object} options
+ * @param {string} name
+ * @returns {boolean}
+ */
+function validateOptions(schema, options, name) {
+  if (!ajv.validate(schema, options)) {
+    throw new ValidationError(ajv.errors, name);
+  }
+
+  return true;
+}
+
+/**
  * @module index
  * @license MIT
  * @version 2017/11/10
  */
 
-// Get typpy
-const { typpy } = inspectAttrs;
-
-exports.inspectAttrs = inspectAttrs;
 exports.chalk = chalk;
 exports.isUrl = isUrl;
 exports.typpy = typpy;
 exports.logger = log;
 exports.promisify = promisify;
 exports.VinylFile = VinylFile;
+exports.validateOptions = validateOptions;
 exports.unixify = unixify;
 exports.normalize = normalize;
 exports.isRelative = isRelative;
