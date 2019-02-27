@@ -130,8 +130,8 @@ class VinylFile extends Vinyl {
  * @param {string} path
  * @returns {string}
  */
-function unixify(path$$1) {
-  return path$$1.replace(/\\/g, '/');
+function unixify(path) {
+  return path.replace(/\\/g, '/');
 }
 
 /**
@@ -140,14 +140,14 @@ function unixify(path$$1) {
  * @param {string} path
  * @returns {string}
  */
-function normalize(path$$1) {
-  const dot = /^\.[\\/]/.test(path$$1);
+function normalize(path$1) {
+  const dot = /^\.[\\/]/.test(path$1);
 
   // Normalize path
-  path$$1 = unixify(path.normalize(path$$1));
+  path$1 = unixify(path.normalize(path$1));
 
   // Get path
-  return dot && !path$$1.startsWith('../') ? `./${path$$1}` : path$$1;
+  return dot && !path$1.startsWith('../') ? `./${path$1}` : path$1;
 }
 
 /**
@@ -156,8 +156,8 @@ function normalize(path$$1) {
  * @param {string} path
  * @returns {boolean}
  */
-function isRelative(path$$1) {
-  return /^\.{1,2}[\\/]/.test(path$$1);
+function isRelative(path) {
+  return /^\.{1,2}[\\/]/.test(path);
 }
 
 /**
@@ -166,8 +166,8 @@ function isRelative(path$$1) {
  * @param {string} path
  * @returns {boolean}
  */
-function isAbsolute(path$$1) {
-  return /^[\\/](?:[^\\/]|$)/.test(path$$1);
+function isAbsolute(path) {
+  return /^[\\/](?:[^\\/]|$)/.test(path);
 }
 
 /**
@@ -177,8 +177,8 @@ function isAbsolute(path$$1) {
  * @param {string} root
  * @returns {boolean}
  */
-function isOutBounds(path$$1, root) {
-  return /(?:^[\\\/]?)\.\.(?:[\\\/]|$)/.test(path.relative(root, path$$1));
+function isOutBounds(path$1, root) {
+  return /(?:^[\\\/]?)\.\.(?:[\\\/]|$)/.test(path.relative(root, path$1));
 }
 
 const cwd = process.cwd();
@@ -189,8 +189,8 @@ const cwd = process.cwd();
  * @param {string} path
  * @returns {string}
  */
-function path2cwd(path$$1) {
-  return unixify(path.relative(cwd, path$$1)) || '.';
+function path2cwd(path$1) {
+  return unixify(path.relative(cwd, path$1)) || '.';
 }
 
 /**
@@ -252,13 +252,13 @@ function apply(fn, context, args) {
  * @param {Object} options
  * @returns {string}
  */
-async function pipeline(plugins, hook, path$$1, contents, options) {
+async function pipeline(plugins, hook, path, contents, options) {
   for (let plugin of plugins) {
     const actuator = plugin[hook];
 
     // If actuator exist
     if (actuator) {
-      const code = await actuator(path$$1, contents, options);
+      const code = await actuator(path, contents, options);
 
       // Valid returned
       if (!typpy(code, String)) {
@@ -300,9 +300,9 @@ const fsReadFile = promisify(fs.readFile);
  * @param {Number} mode
  * @returns {boolean}
  */
-function fsSafeAccess(path$$1, mode = fs.constants.R_OK) {
+function fsSafeAccess(path, mode = fs.constants.R_OK) {
   try {
-    fs.accessSync(path$$1, mode);
+    fs.accessSync(path, mode);
   } catch (error) {
     return false;
   }
@@ -316,14 +316,14 @@ function fsSafeAccess(path$$1, mode = fs.constants.R_OK) {
  * @param {Object} options
  * @returns {Vinyl}
  */
-async function fetchModule(path$$1, options) {
+async function fetchModule(path, options) {
   // Read module
   const base = options.base;
-  const stat = await fsReadStat(path$$1);
-  const contents = await fsReadFile(path$$1);
+  const stat = await fsReadStat(path);
+  const contents = await fsReadFile(path);
 
   // Return a vinyl file
-  return new VinylFile({ base, path: path$$1, stat, contents });
+  return new VinylFile({ base, path, stat, contents });
 }
 
 /**
@@ -421,14 +421,14 @@ class ValidationError extends Error {
    * @param {Array} errors
    * @param {string} name
    */
-  constructor(errors$$1, name) {
+  constructor(errors, name) {
     super();
 
     this.name = 'ValidationError';
 
     this.message = `${name || ''}\n\n`;
 
-    this.errors = errors$$1.map(error => {
+    this.errors = errors.map(error => {
       let dataPath = error.dataPath.replace(/^\//, '').replace(/\//g, '.');
 
       switch (error.keyword) {
