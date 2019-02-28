@@ -22,7 +22,7 @@
   "homepage": "https://github.com/nuintun/gulp-util#readme",
   "dependencies": {
     "vinyl": "^2.1.0",
-    "debug": "^3.1.0",
+    "debug": "^4.1.1",
     "chalk": "^2.3.2"
   }
 }
