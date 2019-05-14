@@ -1,7 +1,7 @@
 /**
  * @module logger
  * @license MIT
- * @version 2018/03/07
+ * @author nuintun
  */
 
 import chalk from 'chalk';

@@ -1,7 +1,7 @@
 /**
  * @module typpy
  * @license MIT
- * @version 2018/03/26
+ * @author nuintun
  * @see https://github.com/IonicaBizau/typpy
  */
 

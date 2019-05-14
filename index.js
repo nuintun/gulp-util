@@ -2,7 +2,7 @@
  * @module @nuintun/gulp-util
  * @author nuintun
  * @license MIT
- * @version 1.0.0
+ * @version 1.0.1
  * @description Utilities for gulp-cmd and gulp-css.
  * @see https://github.com/nuintun/gulp-util#readme
  */
@@ -24,7 +24,7 @@ const keywords = require('ajv-keywords');
 /**
  * @module typpy
  * @license MIT
- * @version 2018/03/26
+ * @author nuintun
  * @see https://github.com/IonicaBizau/typpy
  */
 
@@ -68,7 +68,7 @@ typpy.typeof = function(input, ctor) {
 /**
  * @module promisify
  * @license MIT
- * @version 2018/03/16
+ * @author nuintun
  */
 
 /**
@@ -93,7 +93,7 @@ function promisify(fn) {
 /**
  * @module VinylFile
  * @license MIT
- * @version 2018/03/16
+ * @author nuintun
  */
 
 /**
@@ -121,7 +121,7 @@ class VinylFile extends Vinyl {
 /**
  * @module utils
  * @license MIT
- * @version 2017/11/10
+ * @author nuintun
  */
 
 /**
@@ -329,7 +329,7 @@ async function fetchModule(path, options) {
 /**
  * @module logger
  * @license MIT
- * @version 2018/03/07
+ * @author nuintun
  */
 
 /**
@@ -408,7 +408,7 @@ log.error = error;
 /**
  * @module ValidationError
  * @license MIT
- * @version 2018/12/27
+ * @author nuintun
  */
 
 /**
@@ -460,7 +460,7 @@ class ValidationError extends Error {
 /**
  * @module index
  * @license MIT
- * @version 2018/12/27
+ * @author nuintun
  */
 
 const ajv = new Ajv({
@@ -490,27 +490,27 @@ function validateOptions(schema, options, name) {
 /**
  * @module index
  * @license MIT
- * @version 2017/11/10
+ * @author nuintun
  */
 
 exports.chalk = chalk;
 exports.isUrl = isUrl;
-exports.typpy = typpy;
-exports.logger = log;
-exports.promisify = promisify;
 exports.VinylFile = VinylFile;
-exports.validateOptions = validateOptions;
-exports.unixify = unixify;
-exports.normalize = normalize;
-exports.isRelative = isRelative;
+exports.apply = apply;
+exports.combine = combine;
+exports.fetchModule = fetchModule;
+exports.fsReadFile = fsReadFile;
+exports.fsReadStat = fsReadStat;
+exports.fsSafeAccess = fsSafeAccess;
 exports.isAbsolute = isAbsolute;
 exports.isOutBounds = isOutBounds;
-exports.path2cwd = path2cwd;
+exports.isRelative = isRelative;
+exports.logger = log;
+exports.normalize = normalize;
 exports.parseMap = parseMap;
-exports.apply = apply;
+exports.path2cwd = path2cwd;
 exports.pipeline = pipeline;
-exports.combine = combine;
-exports.fsReadStat = fsReadStat;
-exports.fsReadFile = fsReadFile;
-exports.fsSafeAccess = fsSafeAccess;
-exports.fetchModule = fetchModule;
+exports.promisify = promisify;
+exports.typpy = typpy;
+exports.unixify = unixify;
+exports.validateOptions = validateOptions;

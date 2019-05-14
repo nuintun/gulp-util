@@ -1,7 +1,7 @@
 /**
  * @module VinylFile
  * @license MIT
- * @version 2018/03/16
+ * @author nuintun
  */
 
 import Vinyl from 'vinyl';

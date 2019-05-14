@@ -1,7 +1,7 @@
 /**
  * @module promisify
  * @license MIT
- * @version 2018/03/16
+ * @author nuintun
  */
 
 /**

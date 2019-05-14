@@ -1,7 +1,7 @@
 /**
  * @module index
  * @license MIT
- * @version 2018/12/27
+ * @author nuintun
  */
 
 import Ajv from 'ajv';
