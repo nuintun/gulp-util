@@ -30,7 +30,7 @@ export default function typpy(input, target) {
  * @param {Boolean} ctor A flag to indicate if the return value should be a string or not
  * @returns {Constructor|String}
  */
-typpy.typeof = function(input, ctor) {
+typpy.typeof = function (input, ctor) {
   // NaN
   if (input !== input) return ctor ? NaN : 'nan';
   // Null

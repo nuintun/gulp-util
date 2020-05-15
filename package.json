@@ -23,20 +23,20 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "ajv": "^6.10.0",
-    "chalk": "^2.4.2",
+    "ajv": "^6.12.2",
+    "chalk": "^4.0.0",
     "vinyl": "^2.2.0",
     "is-url": "^1.2.4",
     "ajv-errors": "^1.0.1",
     "time-stamp": "^2.2.0",
-    "ajv-keywords": "^3.4.0"
+    "ajv-keywords": "^3.4.1"
   },
   "devDependencies": {
-    "rollup": "^1.11.3",
-    "fs-extra": "^8.0.1"
+    "rollup": "^2.9.1"
   },
   "scripts": {
-    "prepublishOnly": "node rollup.js"
+    "prepublishOnly": "npm run build",
+    "build": "rollup -c rollup.config.js"
   },
   "homepage": "https://github.com/nuintun/gulp-util#readme"
 }

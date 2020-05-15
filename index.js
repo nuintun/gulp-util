@@ -9,8 +9,6 @@
 
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 const Vinyl = require('vinyl');
 const path = require('path');
 const fs = require('fs');
@@ -53,7 +51,7 @@ function typpy(input, target) {
  * @param {Boolean} ctor A flag to indicate if the return value should be a string or not
  * @returns {Constructor|String}
  */
-typpy.typeof = function(input, ctor) {
+typpy.typeof = function (input, ctor) {
   // NaN
   if (input !== input) return ctor ? NaN : 'nan';
   // Null
@@ -77,7 +75,7 @@ typpy.typeof = function(input, ctor) {
  * @returns {Promise}
  */
 function promisify(fn) {
-  return function(...args) {
+  return function (...args) {
     return new Promise((resolve, reject) => {
       fn(...args, (error, ...args) => {
         if (error) return reject(error);
@@ -486,12 +484,6 @@ function validateOptions(schema, options, name) {
 
   return true;
 }
-
-/**
- * @module index
- * @license MIT
- * @author nuintun
- */
 
 exports.chalk = chalk;
 exports.isUrl = isUrl;

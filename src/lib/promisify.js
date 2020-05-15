@@ -10,7 +10,7 @@
  * @returns {Promise}
  */
 export default function promisify(fn) {
-  return function(...args) {
+  return function (...args) {
     return new Promise((resolve, reject) => {
       fn(...args, (error, ...args) => {
         if (error) return reject(error);
