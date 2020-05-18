@@ -19,7 +19,7 @@ function getTimestamp() {
 /**
  * @function log
  */
-export default function log() {
+function log() {
   const time = getTimestamp();
 
   process.stdout.write(`${time} `);
@@ -76,7 +76,4 @@ function error() {
   return this;
 }
 
-log.info = info;
-log.dir = dir;
-log.warn = warn;
-log.error = error;
+export default { log, info, dir, warn, error };

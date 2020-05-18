@@ -398,10 +398,7 @@ function error() {
   return this;
 }
 
-log.info = info;
-log.dir = dir;
-log.warn = warn;
-log.error = error;
+const logger = { log, info, dir, warn, error };
 
 /**
  * @module ValidationError
@@ -497,7 +494,7 @@ exports.fsSafeAccess = fsSafeAccess;
 exports.isAbsolute = isAbsolute;
 exports.isOutBounds = isOutBounds;
 exports.isRelative = isRelative;
-exports.logger = log;
+exports.logger = logger;
 exports.normalize = normalize;
 exports.parseMap = parseMap;
 exports.path2cwd = path2cwd;

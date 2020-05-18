@@ -8,8 +8,8 @@ import Vinyl from 'vinyl';
 import typpy from './typpy';
 import promisify from './promisify';
 import VinylFile from './VinylFile';
-import { relative, normalize as Pnormalize } from 'path';
-import { stat, readFile, accessSync, constants } from 'fs';
+import { normalize as Pnormalize, relative } from 'path';
+import { accessSync, constants, readFile, stat } from 'fs';
 
 /**
  * @function unixify
