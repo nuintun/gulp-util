@@ -2,7 +2,7 @@
  * @module @nuintun/gulp-util
  * @author nuintun
  * @license MIT
- * @version 2.0.0
+ * @version 2.0.1
  * @description Utilities for gulp-cmd and gulp-css.
  * @see https://github.com/nuintun/gulp-util#readme
  */

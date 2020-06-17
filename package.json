@@ -1,6 +1,6 @@
 {
   "name": "@nuintun/gulp-util",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Utilities for gulp-cmd and gulp-css.",
   "main": "index.js",
   "repository": {
