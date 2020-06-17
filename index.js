@@ -275,7 +275,7 @@ async function pipeline(plugins, hook, path, contents, options) {
 
 /**
  * @function combine
- * @param {Set} bundles
+ * @param {Set|Array} bundles
  * @returns {Buffer}
  */
 function combine(bundles) {
