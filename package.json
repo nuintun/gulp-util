@@ -23,16 +23,16 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "ajv": "^6.12.2",
+    "ajv": "^6.12.4",
     "chalk": "^4.1.0",
     "vinyl": "^2.2.0",
     "is-url": "^1.2.4",
     "ajv-errors": "^1.0.1",
     "time-stamp": "^2.2.0",
-    "ajv-keywords": "^3.4.1"
+    "ajv-keywords": "^3.5.2"
   },
   "devDependencies": {
-    "rollup": "^2.16.1"
+    "rollup": "^2.26.4"
   },
   "scripts": {
     "prepublishOnly": "npm run build",
