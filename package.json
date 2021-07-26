@@ -1,6 +1,6 @@
 {
   "name": "@nuintun/gulp-util",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Utilities for gulp-cmd and gulp-css.",
   "main": "index.js",
   "repository": {
@@ -23,16 +23,16 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "ajv": "^6.12.4",
-    "chalk": "^4.1.0",
-    "vinyl": "^2.2.0",
+    "ajv": "^8.6.2",
+    "chalk": "^4.1.1",
+    "vinyl": "^2.2.1",
     "is-url": "^1.2.4",
-    "ajv-errors": "^1.0.1",
+    "ajv-errors": "^3.0.0",
     "time-stamp": "^2.2.0",
-    "ajv-keywords": "^3.5.2"
+    "ajv-keywords": "^5.0.0"
   },
   "devDependencies": {
-    "rollup": "^2.26.4"
+    "rollup": "^2.54.0"
   },
   "scripts": {
     "prepublishOnly": "npm run build",

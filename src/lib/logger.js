@@ -23,6 +23,7 @@ function log() {
   const time = getTimestamp();
 
   process.stdout.write(`${time} `);
+
   apply(console.log, console, arguments);
 
   return this;
@@ -35,6 +36,7 @@ function info() {
   const time = getTimestamp();
 
   process.stdout.write(`${time} `);
+
   apply(console.info, console, arguments);
 
   return this;
@@ -47,6 +49,7 @@ function dir() {
   const time = getTimestamp();
 
   process.stdout.write(`${time} `);
+
   apply(console.dir, console, arguments);
 
   return this;
@@ -59,6 +62,7 @@ function warn() {
   const time = getTimestamp();
 
   process.stderr.write(`${time} `);
+
   apply(console.warn, console, arguments);
 
   return this;
@@ -71,6 +75,7 @@ function error() {
   const time = getTimestamp();
 
   process.stderr.write(`${time} `);
+
   apply(console.error, console, arguments);
 
   return this;

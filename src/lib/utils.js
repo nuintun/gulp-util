@@ -140,7 +140,7 @@ export function apply(fn, context, args) {
  * @returns {string}
  */
 export async function pipeline(plugins, hook, path, contents, options) {
-  for (let plugin of plugins) {
+  for (const plugin of plugins) {
     const actuator = plugin[hook];
 
     // If actuator exist

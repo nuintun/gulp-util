@@ -33,8 +33,10 @@ export default function typpy(input, target) {
 typpy.typeof = function (input, ctor) {
   // NaN
   if (input !== input) return ctor ? NaN : 'nan';
+
   // Null
   if (null === input) return ctor ? null : 'null';
+
   // Undefined
   if (undefined === input) return ctor ? undefined : 'undefined';
 

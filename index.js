@@ -2,7 +2,7 @@
  * @module @nuintun/gulp-util
  * @author nuintun
  * @license MIT
- * @version 2.0.1
+ * @version 3.0.0
  * @description Utilities for gulp-cmd and gulp-css.
  * @see https://github.com/nuintun/gulp-util#readme
  */
@@ -54,8 +54,10 @@ function typpy(input, target) {
 typpy.typeof = function (input, ctor) {
   // NaN
   if (input !== input) return ctor ? NaN : 'nan';
+
   // Null
   if (null === input) return ctor ? null : 'null';
+
   // Undefined
   if (undefined === input) return ctor ? undefined : 'undefined';
 
@@ -251,7 +253,7 @@ function apply(fn, context, args) {
  * @returns {string}
  */
 async function pipeline(plugins, hook, path, contents, options) {
-  for (let plugin of plugins) {
+  for (const plugin of plugins) {
     const actuator = plugin[hook];
 
     // If actuator exist
@@ -345,6 +347,7 @@ function log() {
   const time = getTimestamp();
 
   process.stdout.write(`${time} `);
+
   apply(console.log, console, arguments);
 
   return this;
@@ -357,6 +360,7 @@ function info() {
   const time = getTimestamp();
 
   process.stdout.write(`${time} `);
+
   apply(console.info, console, arguments);
 
   return this;
@@ -369,6 +373,7 @@ function dir() {
   const time = getTimestamp();
 
   process.stdout.write(`${time} `);
+
   apply(console.dir, console, arguments);
 
   return this;
@@ -381,6 +386,7 @@ function warn() {
   const time = getTimestamp();
 
   process.stderr.write(`${time} `);
+
   apply(console.warn, console, arguments);
 
   return this;
@@ -393,6 +399,7 @@ function error() {
   const time = getTimestamp();
 
   process.stderr.write(`${time} `);
+
   apply(console.error, console, arguments);
 
   return this;
@@ -424,25 +431,25 @@ class ValidationError extends Error {
     this.message = `${name || ''}\n\n`;
 
     this.errors = errors.map(error => {
-      let dataPath = error.dataPath.replace(/^\//, '').replace(/\//g, '.');
+      let instancePath = error.instancePath.replace(/^\//, '').replace(/\//g, '.');
 
       switch (error.keyword) {
         case 'required':
           const required = error.params.missingProperty;
 
-          dataPath = dataPath ? `${dataPath}.${required}` : required;
+          instancePath = instancePath ? `${instancePath}.${required}` : required;
 
-          this.message += `Missing options: ${dataPath}\n`;
+          this.message += `Missing options: ${instancePath}\n`;
           break;
         case 'additionalProperties':
           const unknown = error.params.additionalProperty;
 
-          dataPath = dataPath ? `${dataPath}.${unknown}` : unknown;
+          instancePath = instancePath ? `${instancePath}.${unknown}` : unknown;
 
-          this.message += `Unknown options: ${dataPath}\n`;
+          this.message += `Unknown options: ${instancePath}\n`;
           break;
         default:
-          this.message += `Invalid options: ${dataPath} ${error.message}\n`;
+          this.message += `Invalid options: ${instancePath} ${error.message}\n`;
       }
 
       return error;
@@ -460,11 +467,11 @@ class ValidationError extends Error {
 
 const ajv = new Ajv({
   allErrors: true,
-  useDefaults: true,
-  jsonPointers: true
+  useDefaults: true
 });
 
-keywords(ajv, ['instanceof', 'typeof']);
+keywords(ajv, ['typeof', 'instanceof']);
+
 errors(ajv);
 
 /**

@@ -11,11 +11,11 @@ import ValidationError from './ValidationError';
 
 const ajv = new Ajv({
   allErrors: true,
-  useDefaults: true,
-  jsonPointers: true
+  useDefaults: true
 });
 
-keywords(ajv, ['instanceof', 'typeof']);
+keywords(ajv, ['typeof', 'instanceof']);
+
 errors(ajv);
 
 /**
