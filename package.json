@@ -32,7 +32,7 @@
     "ajv-keywords": "^5.0.0"
   },
   "devDependencies": {
-    "rollup": "^2.54.0"
+    "rollup": "^3.29.5"
   },
   "scripts": {
     "prepublishOnly": "npm run build",
